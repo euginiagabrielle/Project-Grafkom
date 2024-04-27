@@ -592,7 +592,345 @@ function main() {
     //Sean end
 
     //Euginia start
+    var alis = [];
+    var kumis_Atas = [];
+    var kumis_Bawah = [];
+    var arrmulut = [];
+    var test1 = [];
+
+    // [KEPALA]
+    // ---------- MUKA ---------- //
+    var create = createElips(1.0, 36, 18, 1.8, 1.2, 1.0, 0, 0, 0, 0.5, 0.2, 0.8);
+    var elipsoid_vertex = create[0];
+    var elipsoid_faces = create[1];
+    var muka_luar = new MyObject("mukaLuar", elipsoid_vertex, elipsoid_faces, shader_vertex_source, shader_fragment_source);
+    chilli.addChild(muka_luar);
+    test1.push(muka_luar);
+
+    create = createElips(1.15, 36, 18, 1.0, 0.68, 1.0, 0, 0, 0, 1.0, 0.8, 0.8)
+    var elipsoid1_vertex = create[0];
+    var elipsoid1_faces = create[1];
+    var muka_dalam = new MyObject("mukaDalam", elipsoid1_vertex, elipsoid1_faces, shader_vertex_source, shader_fragment_source);
+    muka_dalam.translate = [0, -0.08, 0.3];
+    muka_luar.addChild(muka_dalam);
+    test1.push(muka_dalam);
+
+    // ---------- MATA ---------- //
+    var mata = [];
+    var circle1_vertex = [];
+    circle1_vertex.push(0.33,0,1.42);
+    circle1_vertex.push(0,0,0);
+    for (let i = 0; i <= 360; i++) {
+        circle1_vertex.push(0.33 + 0.1 * Math.cos(i/Math.PI));
+        circle1_vertex.push(0.1 * Math.sin(i/Math.PI));
+        circle1_vertex.push(1.42);
+        circle1_vertex.push(0);
+        circle1_vertex.push(0);
+        circle1_vertex.push(0);
+    }
+    var circle1_faces = [];
+    for (let i = 0; i < 360; i++) {
+        circle1_faces.push(0,i,i+1);
+    }
+    var mata_kiri = new MyObject("mata_Kiri", circle1_vertex, circle1_faces, shader_vertex_source, shader_fragment_source);
+    mata.push(mata_kiri);
+
+    var circle2_vertex = [];
+    circle2_vertex.push(-0.33,0,1.42);
+    circle2_vertex.push(0,0,0);
+    for (let i = 0; i <= 360; i++) {
+        circle2_vertex.push(-0.33 + 0.1 * Math.cos(i/Math.PI));
+        circle2_vertex.push(0.1 * Math.sin(i/Math.PI));
+        circle2_vertex.push(1.42);
+        circle2_vertex.push(0);
+        circle2_vertex.push(0);
+        circle2_vertex.push(0);
+    }
+    var circle2_faces = [];
+    for (let i = 0; i < 360; i++) {
+        circle2_faces.push(0,i,i+1);
+    }
+    var mata_kanan = new MyObject("mata_Kanan", circle2_vertex, circle2_faces, shader_vertex_source, shader_fragment_source);
+    mata.push(mata_kanan);
+
+    // ---------- BLUSH ---------- //
+    create = createElips(0.5, 36, 18, 1, 0.8, 1, 0, 0, 0, 1.0, 0.5, 0.7);
+    var blush_kiri_vertex = create[0];
+    var blush_kiri_faces = create[1];
+    var blush_kiri = new MyObject("blush_Kiri", blush_kiri_vertex, blush_kiri_faces, shader_vertex_source, shader_fragment_source);
+    blush_kiri.translate = [0.53, -0.25, 0.75];
+    muka_luar.addChild(blush_kiri);
+    test1.push(blush_kiri);
+
+    create = createElips(0.5, 36, 18, 1, 0.8, 1, 0, 0, 0, 1.0, 0.5, 0.7);
+    var blush_kanan_vertex = create[0];
+    var blush_kanan_faces = create[1];
+    var blush_kanan = new MyObject("blush_Kanan", blush_kanan_vertex, blush_kanan_faces, shader_vertex_source, shader_fragment_source);
+    blush_kanan.translate = [-0.53, -0.25, 0.75];
+    muka_luar.addChild(blush_kanan);
+    test1.push(blush_kanan);
+
+    // ---------- TELINGA LUAR ---------- //
+    create = createElips(0.6, 36, 18, 0.9, 2.5, 0.8, 0, 0, 0, 0.5, 0.2, 0.8);
+    var telinga_luar_kiri = new MyObject("telinga_LuarKiri", create[0], create[1], shader_vertex_source, shader_fragment_source);
+    telinga_luar_kiri.translate = [0.8, 0.4, 0];
+    telinga_luar_kiri.rotate = [0, 0, 0];
+    muka_luar.addChild(telinga_luar_kiri);
+    test1.push(telinga_luar_kiri);
+
+    create = createElips(0.6, 36, 18, 0.9, 2.5, 0.8, 0, 0, 0, 0.5, 0.2, 0.8);
+    var telinga_luar_kanan = new MyObject("telinga_LuarKanan", create[0], create[1], shader_vertex_source, shader_fragment_source);
+    telinga_luar_kanan.translate = [-0.8, 0.4, 0];
+    telinga_luar_kanan.rotate = [0, 0, 0];
+    muka_luar.addChild(telinga_luar_kanan);
+    test1.push(telinga_luar_kanan);
+
+    // ---------- TELINGA DALAM ---------- //
+    create = createElips(0.53, 36, 18, 0.7, 2, 0.5, 0, 0, 0, 0.4, 0.2, 0.7);
+    var telinga_dalam_kiri = new MyObject("telinga_DalamKiri", create[0], create[1], shader_vertex_source, shader_fragment_source);
+    telinga_dalam_kiri.translate = [0.8, 0.7, 0.2];
+    telinga_dalam_kiri.rotate = [0, 0, 0];
+    muka_luar.addChild(telinga_dalam_kiri);
+    test1.push(telinga_dalam_kiri);
+
+    create = createElips(0.53, 36, 18, 0.7, 2, 0.5, 0, 0, 0, 0.4, 0.2, 0.7);
+    var telinga_dalam_kanan = new MyObject("telinga_DalamKanan", create[0], create[1], shader_vertex_source, shader_fragment_source);
+    telinga_dalam_kanan.translate = [-0.8, 0.7, 0.2];
+    telinga_dalam_kanan.rotate = [0, 0, 0];
+    muka_luar.addChild(telinga_dalam_kanan);
+    test1.push(telinga_dalam_kanan);
     
+    // ---------- ALIS ---------- //
+    var curve1 = [-0.1, 0.05, -0.15, 0.12, -0.3, 0.16];
+    var yAwal = 0.05;
+    for (let index = 0; index < 10; index++) {
+      var vertex = generateBSpline(curve1,100,2, -0.08,yAwal,1.4);
+      var faces = [];
+      for (let index = 0; index < vertex.length/6; index++) {
+        faces.push(index);
+      }
+      var alisKiri = new MyObject("alis_Kiri", vertex, faces, shader_vertex_source, shader_fragment_source);
+      yAwal += 0.003;
+      alis.push(alisKiri);
+    }
+
+    curve1 = [0.1,0.05, 0.15,0.12, 0.3,0.16];
+    yAwal = 0.05;
+    for (let index = 0; index < 10; index++) {
+      var vertex = generateBSpline(curve1,100,2, 0.08,yAwal,1.4);
+      var faces = [];
+      for (let index = 0; index < vertex.length/6; index++) {
+        faces.push(index);
+      }
+      var alisKanan = new MyObject("alis_Kanan", vertex, faces, shader_vertex_source, shader_fragment_source);
+      yAwal += 0.003;
+      alis.push(alisKanan);
+    }
+
+    // ---------- MULUT ---------- //
+    curve1 = [-0.25,-0.24, -0.33,-0.27, -0.3,-0.35,
+            -0.25,-0.4, -0.1,-0.35, 0.3,-0.25];
+    yAwal = 0;
+    for (let index = 0; index < 10; index++) {
+      var vertex = generateBSpline(curve1,100,2, 0,yAwal,1.42);
+      var faces = [];
+      for (let index = 0; index < vertex.length/6; index++) {
+        faces.push(index);
+      }
+      var mulut = new MyObject("mulut", vertex, faces, shader_vertex_source, shader_fragment_source);
+      yAwal += 0.003;
+      arrmulut.push(mulut);
+    }
+
+    // ---------- KUMIS ---------- //
+    curve1 = [0.75,-0.32, 0.95,-0.28, 1.1,-0.38];
+    yAwal = 0.1;
+    for (let index = 0; index < 6; index++) {
+      var vertex = generateBSpline(curve1,100,2, 0,yAwal,1.2);
+      var faces = [];
+      for (let index = 0; index < vertex.length/6; index++) {
+        faces.push(index);
+      }
+      var kumis_AtasKiri = new MyObject("kumis_AtasKiri", vertex, faces, shader_vertex_source, shader_fragment_source);
+      yAwal += 0.003;
+      kumis_Atas.push(kumis_AtasKiri);
+    }
+
+    curve1 = [-0.75,-0.32, -0.95,-0.28, -1.1,-0.38];
+    yAwal = 0.1;
+    for (let index = 0; index < 6; index++) {
+      var vertex = generateBSpline(curve1,100,2, 0,yAwal,1.2);
+      var faces = [];
+      for (let index = 0; index < vertex.length/6; index++) {
+        faces.push(index);
+      }
+      var kumis_AtasKanan = new MyObject("kumis_AtasKanan", vertex, faces, shader_vertex_source, shader_fragment_source);
+      yAwal += 0.003;
+      kumis_Atas.push(kumis_AtasKanan);
+    }
+
+    curve1 = [0.75,-0.4, 0.9,-0.43, 1.0,-0.53];
+    yAwal = 0.1;
+    for (let index = 0; index < 6; index++) {
+      var vertex = generateBSpline(curve1,100,2, 0,yAwal,1.2);
+      var faces = [];
+      for (let index = 0; index < vertex.length/6; index++) {
+        faces.push(index);
+      }
+      var kumis_BawahKiri = new MyObject("kumis_BawahKiri", vertex, faces, shader_vertex_source, shader_fragment_source);
+      yAwal += 0.003;
+      kumis_Bawah.push(kumis_BawahKiri);
+    }
+
+    curve1 = [-0.75,-0.4, -0.9,-0.43, -1.0,-0.53];
+    yAwal = 0.1;
+    for (let index = 0; index < 6; index++) {
+      var vertex = generateBSpline(curve1,100,2, 0,yAwal,1.2);
+      var faces = [];
+      for (let index = 0; index < vertex.length/6; index++) {
+        faces.push(index);
+      }
+      var kumis_BawahKanan = new MyObject("kumis_BawahKanan", vertex, faces, shader_vertex_source, shader_fragment_source);
+      yAwal += 0.003;
+      kumis_Bawah.push(kumis_BawahKanan);
+    }
+
+    // [BADAN FULL]
+    var badan_vertex = [];
+    var badan_faces = [];
+    // ---------- BADAN ---------- //
+    var create = customTabung(0.7, 0, 0, 0, 0.7, 0.5, 0.2, 0.8, badan_vertex, badan_faces, 1, 0.65);
+    var badan_vertex = create[0];
+    var badan_faces = create[1];
+    var badan = new MyObject("badan", badan_vertex, badan_faces, shader_vertex_source, shader_fragment_source);
+    badan.translate = [0, 0, 1];
+    badan.rotate = [90, 0, 0];
+    chilli.addChild(badan);
+    test1.push(badan);
+
+    // ---------- KAKI ---------- //
+    create = createElipPara(0.4, 36, 18, 1, 1, 2, 0, 0, 0, 0.5, 0.2, 0.8);
+    var kaki_kiri_vertex = create[0];
+    var kaki_kiri_faces = create[1];
+    var kaki_kiri = new MyObject("kaki_Kiri", kaki_kiri_vertex, kaki_kiri_faces, shader_vertex_source, shader_fragment_source);
+    kaki_kiri.translate = [0.3, 0, 1.5];
+    kaki_kiri.rotate = [90, 0, 0];
+    badan.addChild(kaki_kiri);
+    test1.push(kaki_kiri);
+
+    create = createElipPara(0.4, 36, 18, 1, 1, 2, 0, 0, 0, 0.5, 0.2, 0.8);
+    var kaki_kanan_vertex = create[0];
+    var kaki_kanan_faces = create[1];
+    var kaki_kanan = new MyObject("kaki_Kanan", kaki_kanan_vertex, kaki_kanan_faces, shader_vertex_source, shader_fragment_source);
+    kaki_kanan.translate = [-0.3, 0, 1.5];
+    kaki_kanan.rotate = [90, 0, 0];
+    badan.addChild(kaki_kanan);
+    test1.push(kaki_kanan);
+
+    // ---------- LENGAN ---------- //
+    var lengan_kiri_vertex = [];
+    var lengan_kiri_faces = [];
+    create = createTabung(0.25, 0, 0, 0, 0.3, 0.5, 0.2, 0.8, lengan_kiri_vertex, lengan_kiri_faces);
+    lengan_kiri_vertex = create[0];
+    lengan_kiri_faces = create[1];
+    var lengan_kiri = new MyObject("lengan_Kiri", lengan_kiri_vertex, lengan_kiri_faces, shader_vertex_source, shader_fragment_source);
+    lengan_kiri.translate = [0.9, 0, 0.9];
+    lengan_kiri.rotate = [90, 0, 0];
+    badan.addChild(lengan_kiri);
+    test1.push(lengan_kiri);
+
+    var lengan_kanan_vertex = [];
+    var lengan_kanan_faces = [];
+    create = createTabung(0.25, 0, 0, 0, 0.3, 0.5, 0.2, 0.8, lengan_kanan_vertex, lengan_kanan_faces);
+    lengan_kanan_vertex = create[0];
+    lengan_kanan_faces = create[1];
+    var lengan_kanan = new MyObject("lengan_Kanan", lengan_kanan_vertex, lengan_kanan_faces, shader_vertex_source, shader_fragment_source);
+    lengan_kanan.translate = [-0.9, 0, 0.9];
+    lengan_kanan.rotate = [90, 0, 0];
+    badan.addChild(lengan_kanan);
+    test1.push(lengan_kanan);
+
+    // ---------- TANGAN ---------- //
+    create = createElipPara(0.25, 36, 18, 1, 1, 2, 0, 0, 0, 0.5, 0.2, 0.8);
+    var tangan_kiri_vertex = create[0];
+    var tangan_kiri_faces = create[1];
+    var tangan_kiri = new MyObject("tangan_Kiri", tangan_kiri_vertex, tangan_kiri_faces, shader_vertex_source, shader_fragment_source);
+    tangan_kiri.translate = [0.9, 0, 1.2];
+    tangan_kiri.rotate = [90, 0, 0];
+    chilli.addChild(tangan_kiri);
+    test1.push(tangan_kiri);
+
+    create = createElipPara(0.25, 36, 18, 1, 1, 2, 0, 0, 0, 0.5, 0.2, 0.8);
+    var tangan_kanan_vertex = create[0];
+    var tangan_kanan_faces = create[1];
+    var tangan_kanan = new MyObject("tangan_Kanan", tangan_kanan_vertex, tangan_kanan_faces, shader_vertex_source, shader_fragment_source);
+    tangan_kanan.translate = [-0.9, 0, 1.2];
+    tangan_kanan.rotate = [90, 0, 0];
+    chilli.addChild(tangan_kanan);
+    test1.push(tangan_kanan);
+
+    // ---------- KALUNG ---------- //
+    var kalung_vertex = [];
+    var kalung_faces = [];
+    create = customTabung(0.5, 0, 0, 0, 0.05, 0, 0, 0, kalung_vertex, kalung_faces, 1.4, 1.1);
+    kalung_vertex = create[0];
+    kalung_faces = create[1];
+    var kalung = new MyObject("kalung", kalung_vertex, kalung_faces, shader_vertex_source, shader_fragment_source);
+    kalung.translate = [0, 0, 1.05];
+    kalung.rotate = [90, 0, 0];
+    badan.addChild(kalung);
+    test1.push(kalung);
+
+    // ---------- DIAMOND ---------- //
+    var triangle1_vertex = [-0.2, -1.2, 0.55, 0, 0.4, 0.8,
+                            0, -1.4, 0.55, 0, 0.4, 0.8,
+                            0.2, -1.2, 0.55, 0, 0.4, 0.8];
+    var triangle1_faces = [0,1,2];
+    var diamond_bawah = new MyObject("diamond_Bawah", triangle1_vertex, triangle1_faces, shader_vertex_source, shader_fragment_source);
+    badan.addChild(diamond_bawah);
+    test1.push(diamond_bawah);
+
+    var triangle2_vertex = [-0.2, -1.2, 0.55, 0, 0.4, 0.8,
+                            0, -1, 0.55, 0, 0.4, 0.8,
+                            0.2, -1.2, 0.55, 0, 0.4, 0.8];
+    var triangle2_faces = [0,1,2];
+    var diamond_atas = new MyObject("diamond_Atas", triangle2_vertex, triangle2_faces, shader_vertex_source, shader_fragment_source);
+    badan.addChild(diamond_atas);
+    test1.push(diamond_atas);
+
+    alis.forEach(obj => {
+      muka_luar.addChild(obj);
+      test1.push(obj);
+    });
+
+    arrmulut.forEach(obj => {
+      muka_luar.addChild(obj);
+      test1.push(obj);
+    });
+
+    kumis_Atas.forEach(obj => {
+      muka_luar.addChild(obj);
+      test1.push(obj);
+    });
+
+    kumis_Bawah.forEach(obj => {
+      muka_luar.addChild(obj);
+      test1.push(obj);
+    });
+
+    mata.forEach(obj => {
+      muka_luar.addChild(obj);
+      test1.push(obj);
+    });
+
+    chilli.setScale(0.3);
+
+    var euginia_membesar = true;
+    var euginia_nextTime = 0;
+    var euginia_ganjil = false;
+    var euginia_genap = true;
+    var euginia_maju = true;
+    var euginia_mundur = false;
     //...
     //Euginia end
 
@@ -637,7 +975,19 @@ function main() {
             //Sean end
         
             //Euginia start
-            
+            var euginia_second = time / 1000;
+            chilli.setRotateMove(LIBS.radToDeg(PHI), LIBS.radToDeg(THETA), 0);
+            if (euginia_membesar) {
+              chilli.addScale(0.001);
+              if (chilli.scale[0] >= 0.35) {
+                euginia_membesar = false;
+              }
+            } else {
+              chilli.addScale(-0.001);
+              if (chilli.scale[0] <= 0.35) {
+                euginia_membesar = true;
+              }
+            }
             //...
             //Euginia end
         
@@ -664,7 +1014,94 @@ function main() {
         //Sean end
         
         //Euginia start
-            
+        chilli.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
+          chilli.draw();
+          chilli.setIdentityMove();
+          if (euginia_second >= euginia_nextTime) {
+            if (euginia_genap) {
+              if (euginia_maju) {
+                  kaki_kanan.setRotate(10,0,0);
+                  kaki_kanan.setTranslateMove(0,0.3,0);
+                  lengan_kiri.setRotate(10,0,0);
+                  tangan_kiri.setRotate(10,0,0);
+                  
+              } else if (euginia_mundur){
+                  kaki_kanan.setRotate(-10,0,0);
+                  kaki_kanan.setTranslateMove(0,-0.3,0);
+                  lengan_kiri.setRotate(-10,0,0);
+                  tangan_kiri.setRotate(-10,0,0);
+              }
+              if (euginia_mundur) {
+                  kaki_kiri.setRotate(10,0,0);
+                  kaki_kiri.setTranslateMove(0,0.3,0);
+                  lengan_kanan.setRotate(10,0,0);
+                  tangan_kanan.setRotate(10,0,0);
+              } else if (euginia_maju){
+                  kaki_kiri.setRotate(-10,0,0);
+                  kaki_kiri.setTranslateMove(0,-0.3,0);
+                  lengan_kanan.setRotate(-10,0,0);
+                  tangan_kanan.setRotate(-10,0,0);
+              }
+              euginia_genap = false;
+              euginia_ganjil = true;
+          } else if (euginia_ganjil) {
+              if (euginia_maju) {
+                  kaki_kanan.setRotate(-10,0,0);
+                  kaki_kanan.setTranslateMove(0,-0.3,0);
+                  lengan_kiri.setRotate(-10,0,0);
+                  tangan_kiri.setRotate(-10,0,0);
+                  euginia_maju = false;
+                  euginia_mundur = true;
+              } else if (euginia_mundur) {
+                  kaki_kanan.setRotate(10,0,0);
+                  kaki_kanan.setTranslateMove(0,0.3,0);
+                  lengan_kiri.setRotate(10,0,0);
+                  tangan_kiri.setRotate(10,0,0);
+                  euginia_maju = true;
+                  euginia_mundur = false;
+              }
+              if (euginia_mundur) {
+                  kaki_kiri.setRotate(-10,0,0);
+                  kaki_kiri.setTranslateMove(0,-0.3,0);
+                  lengan_kanan.setRotate(-10,0,0);
+                  tangan_kanan.setRotate(-10,0,0);
+                  euginia_maju = false;
+                  euginia_mundur = true;
+              } else if (euginia_maju) {
+                  kaki_kiri.setRotate(10,0,0);
+                  kaki_kiri.setTranslateMove(0,0.3,0);
+                  lengan_kanan.setRotate(10,0,0);
+                  tangan_kanan.setRotate(10,0,0);
+                  euginia_maju = true;
+                  euginia_mundur = false;
+              }
+              euginia_genap = true;
+              euginia_ganjil = false;
+            } 
+            euginia_nextTime += 0.3;
+          }
+          
+          if (euginia_second >= 3 && euginia_second <= 4) {
+            chilli.setTranslateMove(-0.1, 0, 0);
+          }
+          if (euginia_second >= 4 && euginia_second <= 8) {
+            chilli.setRotate(0,1,0);
+          }
+          if (euginia_second >= 8 && euginia_second <= 9) {
+            chilli.setTranslateMove(0.1,0,0);
+          }
+          if (euginia_second >= 9 && euginia_second <= 12) {
+            chilli.setRotate(2,0,0);
+          }
+          if (euginia_second >= 12 && euginia_second <= 13) {
+            chilli.setTranslateMove(0,0,0);
+          }
+          if (euginia_second >= 13 && euginia_second <= 15) {
+            chilli.setRotate(0,1,0);
+          }
+          if (euginia_second >= 15 && euginia_second <= 15) {
+            chilli.setTranslateMove(0,0,0);
+          }
         //...
         //Euginia end
         
