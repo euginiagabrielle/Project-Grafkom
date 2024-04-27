@@ -579,11 +579,28 @@ function main() {
         return [vertex, faces];
     };
 
+    //env start
     var persegi_vertex = [3, -0.8, 3, 0.4, 0.5, 0.6, -3,-0.8,3, 0.4, 0.5, 0.6, 3,-0.8,-3, 0.4, 0.5, 0.6, -3, -0.8, -3, 0.4, 0.5, 0.6];
     var persegi_faces = [0, 1, 2, 2, 1, 3];
     var lantai = new MyObject("persegi", persegi_vertex, persegi_faces, shader_vertex_source, shader_fragment_source);
-    
+    //...
+    //env end
 
+    //Sean start
+    
+    //...
+    //Sean end
+
+    //Euginia start
+    
+    //...
+    //Euginia end
+
+    //Willy start
+    
+    //...
+    //Willy end
+    
     //MATRIX
     var PROJMATRIX = LIBS.get_projection(40, CANVAS.width / CANVAS.height, 1, 100);
     var VIEWMATRIX = LIBS.get_I4();
@@ -609,17 +626,53 @@ function main() {
                 THETA += dX;
                 PHI += dY;
             }
+            //cam rotate
             LIBS.set_I4(VIEWMATRIX);
             LIBS.rotateY(VIEWMATRIX, THETA);
             LIBS.rotateX(VIEWMATRIX, PHI);
+
+            //Sean start
+            
+            //...
+            //Sean end
+        
+            //Euginia start
+            
+            //...
+            //Euginia end
+        
+            //Willy start
+            
+            //...
+            //Willy end
+            
             time_prev = time;
         }
         GL.viewport(0, 0, CANVAS.width, CANVAS.height);
         GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
-        
+
+        //env start
         lantai.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
         lantai.draw();
         lantai.setIdentityMove();
+        //...
+        //env end
+        
+        //Sean start
+        
+        //...
+        //Sean end
+        
+        //Euginia start
+            
+        //...
+        //Euginia end
+        
+        //Willy start
+            
+        //...
+        //Willy end
+        
         
         GL.flush();
         window.requestAnimationFrame(animate);
