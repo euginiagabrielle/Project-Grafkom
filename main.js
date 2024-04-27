@@ -163,11 +163,15 @@ class MyObject {
     }
     addScale(s) {
         let x = this.scale[0] + s;
-        let y = this.scale[1] + s;
-        let z = this.scale[2] + s;
-        this.scale = [x, y, z];
+        this.scale = [x, x,x];
         this.child.forEach(obj => {
-            obj.setScale(s);
+            obj.addScale(s);
+        });
+    }
+    fixScale(s) {
+        this.scale = [s,s,s];
+        this.child.forEach(obj => {
+            obj.fixScale(s);
         });
     }
     setIdentityMove() {
@@ -768,7 +772,7 @@ function main() {
     var tanganKiri = new MyObject("tanganKiri", tanganKiri_vertex, tanganKiri_faces, shader_vertex_source, shader_fragment_source);
     tanganKiri.translate = [1, 0, 1.4];
     tanganKiri.rotate = [90, 0, 0];
-    yeDee.addChild(tanganKiri);
+    lenganKiri.addChild(tanganKiri);
     test.push(tanganKiri);
 
     calculate = createElipPara(0.2, 36, 18, 1, 1, 2, 0, 0, 0, 69.0 / 255, 196.0 / 255, 202.0 / 255);
@@ -777,7 +781,7 @@ function main() {
     var tanganKanan = new MyObject("tanganKanan", tanganKanan_vertex, tanganKanan_faces, shader_vertex_source, shader_fragment_source);
     tanganKanan.translate = [-1, 0, 1.4];
     tanganKanan.rotate = [90, 0, 0];
-    yeDee.addChild(tanganKanan);
+    lenganKanan.addChild(tanganKanan);
     test.push(tanganKanan);
 
     var headband1_vertex = [];
@@ -980,7 +984,7 @@ function main() {
     mainBody.addChild(persegiMid);
     test.push(persegiMid);
     
-    yeDee.setScale(0.1);
+    yeDee.setScale(0.3);
     
     var membesar = true;
     var nextTime = 0;
@@ -988,6 +992,7 @@ function main() {
     var genap = true;
     var maju = true;
     var mundur = false;
+    var nextTime = 0;
     //...
     //Sean end
 
@@ -1005,7 +1010,7 @@ function main() {
     var PROJMATRIX = LIBS.get_projection(40, CANVAS.width / CANVAS.height, 1, 100);
     var VIEWMATRIX = LIBS.get_I4();
 
-    LIBS.translateZ(VIEWMATRIX, -10);
+    LIBS.translateZ(VIEWMATRIX, -5);
 
     //DRAWING
     GL.clearColor(0.0, 0.0, 0.0, 0.0);
@@ -1035,14 +1040,15 @@ function main() {
             var sean_second = time / 1000;
             yeDee.setRotateMove(LIBS.radToDeg(PHI), LIBS.radToDeg(THETA), 0);
             if (membesar) {
-                telinga.addScale(1.005);
-                membesar = false;
-                nextTime = nextTime + time + time;
-                console.log("big");
-                console.log(nextTime);
-            }
-            if (time >= nextTime & telinga.scale[0] <= 4) {
-                membesar = true;
+                yeDee.addScale(0.001);
+                if (yeDee.scale[0] >= 0.33) {
+                    membesar = false;
+                }
+            } else {
+                yeDee.addScale(-0.001);
+                if (yeDee.scale[0] <= 0.3) {
+                    membesar = true;
+                }
             }
             //...
             //Sean end
@@ -1073,67 +1079,74 @@ function main() {
         yeDee.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
         yeDee.draw();
         yeDee.setIdentityMove();
-        if (genap) {
-            if (maju) {
-                kakiKanan.setRotate(10,0,0);
-                kakiKanan.setTranslateMove(0,0.3,0);
-            } else if (mundur){
-                kakiKanan.setRotate(-10,0,0);
-                kakiKanan.setTranslateMove(0,-0.3,0);
+        if (sean_second >= nextTime) {
+            if (genap) {
+                if (maju) {
+                    kakiKanan.setRotate(10,0,0);
+                    kakiKanan.setTranslateMove(0,0.3,0);
+                    lenganKiri.setRotate(10,0,0);
+                } else if (mundur){
+                    kakiKanan.setRotate(-10,0,0);
+                    kakiKanan.setTranslateMove(0,-0.3,0);
+                    lenganKiri.setRotate(-10,0,0);
+                }
+                if (mundur) {
+                    kakiKiri.setRotate(10,0,0);
+                    kakiKiri.setTranslateMove(0,0.3,0);
+                    lenganKanan.setRotate(10,0,0);
+                } else if (maju){
+                    kakiKiri.setRotate(-10,0,0);
+                    kakiKiri.setTranslateMove(0,-0.3,0);
+                    lenganKanan.setRotate(-10,0,0);
+                }
+                genap = false;
+                ganjil = true;
+            } else if (ganjil) {
+                if (maju) {
+                    kakiKanan.setRotate(-10,0,0);
+                    kakiKanan.setTranslateMove(0,-0.3,0);
+                    lenganKiri.setRotate(-10,0,0);
+                    maju = false;
+                    mundur = true;
+                } else if (mundur) {
+                    kakiKanan.setRotate(10,0,0);
+                    kakiKanan.setTranslateMove(0,0.3,0);
+                    lenganKiri.setRotate(10,0,0);
+                    maju = true;
+                    mundur = false;
+                }
+                if (mundur) {
+                    kakiKiri.setRotate(-10,0,0);
+                    kakiKiri.setTranslateMove(0,-0.3,0);
+                    lenganKanan.setRotate(-10,0,0);
+                    maju = false;
+                    mundur = true;
+                } else if (maju) {
+                    kakiKiri.setRotate(10,0,0);
+                    kakiKiri.setTranslateMove(0,0.3,0);
+                    lenganKanan.setRotate(10,0,0);
+                    maju = true;
+                    mundur = false;
+                }
+                genap = true;
+                ganjil = false;
             }
-            if (mundur) {
-                kakiKiri.setRotate(10,0,0);
-                kakiKiri.setTranslateMove(0,0.3,0);
-            } else if (maju){
-                kakiKiri.setRotate(-10,0,0);
-                kakiKiri.setTranslateMove(0,-0.3,0);
-            }
-            genap = false;
-            ganjil = true;
-        } else if (ganjil) {
-            if (maju) {
-                kakiKanan.setRotate(-10,0,0);
-                kakiKanan.setTranslateMove(0,-0.3,0);
-                maju = false;
-                mundur = true;
-            } else if (mundur) {
-                kakiKanan.setRotate(10,0,0);
-                kakiKanan.setTranslateMove(0,0.3,0);
-                maju = true;
-                mundur = false;
-            }
-            if (mundur) {
-                kakiKiri.setRotate(-10,0,0);
-                kakiKiri.setTranslateMove(0,-0.3,0);
-                maju = false;
-                mundur = true;
-            } else if (maju) {
-                kakiKiri.setRotate(10,0,0);
-                kakiKiri.setTranslateMove(0,0.3,0);
-                maju = true;
-                mundur = false;
-            }
-            genap = true;
-            ganjil = false;
+            nextTime += 0.2;
         }
 
-        //entrance...APPROVE
-        if (sean_second >= 0.5 & sean_second <=2.9) {
-            yeDee.setTranslateMove(-0.1,0,0);
-        }
-        
 
-        //Rotate at arbitrary axis...APPROVE
-        // bisa tanpa translasi, lgsg pakai entrance movement
-        // if (second >= 3 & second <= 4) {
-        //     yeDee.setTranslateMove(-0.1, 0, 0);
-        // }
-        if (sean_second >= 4 & sean_second <= 8) {
+        // //Rotate at arbitrary axis...APPROVE
+        // // bisa tanpa translasi, lgsg pakai entrance movement
+        if (sean_second >= 3 & sean_second <= 4) {
+            yeDee.setTranslateMove(-0.1, 0, 0);
+        }
+        if (sean_second >= 4 & sean_second <= 10) {
             yeDee.setRotate(0,2,0);
         }
-        // if (second >= 8 & second <= 9) {
-        //     yeDee.setTranslateMove(0.1,0,0);
-        // }
+        if (sean_second >= 10 & sean_second <= 11) {
+            yeDee.setTranslateMove(0.1,0,0);
+        }
+        
         //...
         //Sean end
         
