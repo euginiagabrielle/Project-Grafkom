@@ -11,7 +11,6 @@ var alis = [];
 var kumis_Atas = [];
 var kumis_Bawah = [];
 var arrmulut = [];
-var test1 = [];
 
 class MyObject {
     object_vertex = [];
@@ -340,6 +339,79 @@ function main() {
             vertex[index + 2] += newZ;
         }
     }
+    function generateBSpline(controlPoint, m, degree, xUp, yUp, zUp){
+        var curves = [];
+        var knotVector = []
+       
+        var n = controlPoint.length/2;
+       
+       
+        // Calculate the knot values based on the degree and number of control points
+        for (var i = 0; i < n + degree+1; i++) {
+          if (i < degree + 1) {
+            knotVector.push(0);
+          } else if (i >= n) {
+            knotVector.push(n - degree);
+          } else {
+            knotVector.push(i - degree);
+          }
+        }
+       
+    
+       
+        var basisFunc = function(i,j,t){
+            if (j == 0){
+              if(knotVector[i] <= t && t<(knotVector[(i+1)])){ 
+                return 1;
+              }else{
+                return 0;
+              }
+            }
+       
+            var den1 = knotVector[i + j] - knotVector[i];
+            var den2 = knotVector[i + j + 1] - knotVector[i + 1];
+       
+            var term1 = 0;
+            var term2 = 0;
+       
+       
+            if (den1 != 0 && !isNaN(den1)) {
+              term1 = ((t - knotVector[i]) / den1) * basisFunc(i,j-1,t);
+            }
+       
+            if (den2 != 0 && !isNaN(den2)) {
+              term2 = ((knotVector[i + j + 1] - t) / den2) * basisFunc(i+1,j-1,t);
+            }
+       
+            return term1 + term2;
+        }
+       
+       
+        for(var t=0;t<m;t++){
+          var x=0;
+          var y=0;
+       
+          var u = (t/m * (knotVector[controlPoint.length/2] - knotVector[degree]) ) + knotVector[degree] ;
+       
+          //C(t)
+          for(var key =0;key<n;key++){
+       
+            var C = basisFunc(key,degree,u);
+            // console.log(C);
+            x+=(controlPoint[key*2] * C);
+            y+=(controlPoint[key*2+1] * C);
+            // console.log(t+" "+degree+" "+x+" "+y+" "+C);
+          }
+          curves.push(x+xUp);
+          curves.push(y+yUp);
+          curves.push(zUp);
+          curves.push(0,0,0);
+       
+        }
+        // console.log(curves)
+        return curves;
+    }
+
     function createElips(radius, sectorCount, stackCount, factorX, factorY, factorZ, moveX, moveY, moveZ, c1, c2, c3) {
         elipsHead_vertex = [];
         elipsHead_faces = [];
@@ -598,6 +670,7 @@ function main() {
     //Sean end
 
     //Euginia start
+    var chilli = new MyObject("chilli", [], [], shader_vertex_source, shader_fragment_source);
     // [KEPALA]
     // ---------- MUKA ---------- //
     var create = createElips(1.0, 36, 18, 1.8, 1.2, 1.0, 0, 0, 0, 0.5, 0.2, 0.8);
@@ -605,7 +678,6 @@ function main() {
     var elipsoid_faces = create[1];
     var muka_luar = new MyObject("mukaLuar", elipsoid_vertex, elipsoid_faces, shader_vertex_source, shader_fragment_source);
     chilli.addChild(muka_luar);
-    test1.push(muka_luar);
 
     create = createElips(1.15, 36, 18, 1.0, 0.68, 1.0, 0, 0, 0, 1.0, 0.8, 0.8)
     var elipsoid1_vertex = create[0];
@@ -613,7 +685,6 @@ function main() {
     var muka_dalam = new MyObject("mukaDalam", elipsoid1_vertex, elipsoid1_faces, shader_vertex_source, shader_fragment_source);
     muka_dalam.translate = [0, -0.08, 0.3];
     muka_luar.addChild(muka_dalam);
-    test1.push(muka_dalam);
 
     // ---------- MATA ---------- //
     var mata = [];
@@ -660,7 +731,6 @@ function main() {
     var blush_kiri = new MyObject("blush_Kiri", blush_kiri_vertex, blush_kiri_faces, shader_vertex_source, shader_fragment_source);
     blush_kiri.translate = [0.53, -0.25, 0.75];
     muka_luar.addChild(blush_kiri);
-    test1.push(blush_kiri);
 
     create = createElips(0.5, 36, 18, 1, 0.8, 1, 0, 0, 0, 1.0, 0.5, 0.7);
     var blush_kanan_vertex = create[0];
@@ -668,7 +738,6 @@ function main() {
     var blush_kanan = new MyObject("blush_Kanan", blush_kanan_vertex, blush_kanan_faces, shader_vertex_source, shader_fragment_source);
     blush_kanan.translate = [-0.53, -0.25, 0.75];
     muka_luar.addChild(blush_kanan);
-    test1.push(blush_kanan);
 
     // ---------- TELINGA LUAR ---------- //
     create = createElips(0.6, 36, 18, 0.9, 2.5, 0.8, 0, 0, 0, 0.5, 0.2, 0.8);
@@ -676,14 +745,12 @@ function main() {
     telinga_luar_kiri.translate = [0.8, 0.4, 0];
     telinga_luar_kiri.rotate = [0, 0, 0];
     muka_luar.addChild(telinga_luar_kiri);
-    test1.push(telinga_luar_kiri);
 
     create = createElips(0.6, 36, 18, 0.9, 2.5, 0.8, 0, 0, 0, 0.5, 0.2, 0.8);
     var telinga_luar_kanan = new MyObject("telinga_LuarKanan", create[0], create[1], shader_vertex_source, shader_fragment_source);
     telinga_luar_kanan.translate = [-0.8, 0.4, 0];
     telinga_luar_kanan.rotate = [0, 0, 0];
     muka_luar.addChild(telinga_luar_kanan);
-    test1.push(telinga_luar_kanan);
 
     // ---------- TELINGA DALAM ---------- //
     create = createElips(0.53, 36, 18, 0.7, 2, 0.5, 0, 0, 0, 0.4, 0.2, 0.7);
@@ -691,14 +758,12 @@ function main() {
     telinga_dalam_kiri.translate = [0.8, 0.7, 0.2];
     telinga_dalam_kiri.rotate = [0, 0, 0];
     muka_luar.addChild(telinga_dalam_kiri);
-    test1.push(telinga_dalam_kiri);
 
     create = createElips(0.53, 36, 18, 0.7, 2, 0.5, 0, 0, 0, 0.4, 0.2, 0.7);
     var telinga_dalam_kanan = new MyObject("telinga_DalamKanan", create[0], create[1], shader_vertex_source, shader_fragment_source);
     telinga_dalam_kanan.translate = [-0.8, 0.7, 0.2];
     telinga_dalam_kanan.rotate = [0, 0, 0];
     muka_luar.addChild(telinga_dalam_kanan);
-    test1.push(telinga_dalam_kanan);
     
     // ---------- ALIS ---------- //
     var curve1 = [-0.1, 0.05, -0.15, 0.12, -0.3, 0.16];
@@ -806,7 +871,6 @@ function main() {
     badan.translate = [0, 0, 1];
     badan.rotate = [90, 0, 0];
     chilli.addChild(badan);
-    test1.push(badan);
 
     // ---------- KAKI ---------- //
     create = createElipPara(0.4, 36, 18, 1, 1, 2, 0, 0, 0, 0.5, 0.2, 0.8);
@@ -816,7 +880,6 @@ function main() {
     kaki_kiri.translate = [0.3, 0, 1.5];
     kaki_kiri.rotate = [90, 0, 0];
     badan.addChild(kaki_kiri);
-    test1.push(kaki_kiri);
 
     create = createElipPara(0.4, 36, 18, 1, 1, 2, 0, 0, 0, 0.5, 0.2, 0.8);
     var kaki_kanan_vertex = create[0];
@@ -825,7 +888,6 @@ function main() {
     kaki_kanan.translate = [-0.3, 0, 1.5];
     kaki_kanan.rotate = [90, 0, 0];
     badan.addChild(kaki_kanan);
-    test1.push(kaki_kanan);
 
     // ---------- LENGAN ---------- //
     var lengan_kiri_vertex = [];
@@ -837,7 +899,6 @@ function main() {
     lengan_kiri.translate = [0.9, 0, 0.9];
     lengan_kiri.rotate = [90, 0, 0];
     badan.addChild(lengan_kiri);
-    test1.push(lengan_kiri);
 
     var lengan_kanan_vertex = [];
     var lengan_kanan_faces = [];
@@ -848,7 +909,6 @@ function main() {
     lengan_kanan.translate = [-0.9, 0, 0.9];
     lengan_kanan.rotate = [90, 0, 0];
     badan.addChild(lengan_kanan);
-    test1.push(lengan_kanan);
 
     // ---------- TANGAN ---------- //
     create = createElipPara(0.25, 36, 18, 1, 1, 2, 0, 0, 0, 0.5, 0.2, 0.8);
@@ -858,7 +918,6 @@ function main() {
     tangan_kiri.translate = [0.9, 0, 1.2];
     tangan_kiri.rotate = [90, 0, 0];
     chilli.addChild(tangan_kiri);
-    test1.push(tangan_kiri);
 
     create = createElipPara(0.25, 36, 18, 1, 1, 2, 0, 0, 0, 0.5, 0.2, 0.8);
     var tangan_kanan_vertex = create[0];
@@ -867,7 +926,6 @@ function main() {
     tangan_kanan.translate = [-0.9, 0, 1.2];
     tangan_kanan.rotate = [90, 0, 0];
     chilli.addChild(tangan_kanan);
-    test1.push(tangan_kanan);
 
     // ---------- KALUNG ---------- //
     var kalung_vertex = [];
@@ -879,7 +937,6 @@ function main() {
     kalung.translate = [0, 0, 1.05];
     kalung.rotate = [90, 0, 0];
     badan.addChild(kalung);
-    test1.push(kalung);
 
     // ---------- DIAMOND ---------- //
     var triangle1_vertex = [-0.2, -1.2, 0.55, 0, 0.4, 0.8,
@@ -888,7 +945,6 @@ function main() {
     var triangle1_faces = [0,1,2];
     var diamond_bawah = new MyObject("diamond_Bawah", triangle1_vertex, triangle1_faces, shader_vertex_source, shader_fragment_source);
     badan.addChild(diamond_bawah);
-    test1.push(diamond_bawah);
 
     var triangle2_vertex = [-0.2, -1.2, 0.55, 0, 0.4, 0.8,
                             0, -1, 0.55, 0, 0.4, 0.8,
@@ -896,31 +952,25 @@ function main() {
     var triangle2_faces = [0,1,2];
     var diamond_atas = new MyObject("diamond_Atas", triangle2_vertex, triangle2_faces, shader_vertex_source, shader_fragment_source);
     badan.addChild(diamond_atas);
-    test1.push(diamond_atas);
 
     alis.forEach(obj => {
       muka_luar.addChild(obj);
-      test1.push(obj);
     });
 
     arrmulut.forEach(obj => {
       muka_luar.addChild(obj);
-      test1.push(obj);
     });
 
     kumis_Atas.forEach(obj => {
       muka_luar.addChild(obj);
-      test1.push(obj);
     });
 
     kumis_Bawah.forEach(obj => {
       muka_luar.addChild(obj);
-      test1.push(obj);
     });
 
     mata.forEach(obj => {
       muka_luar.addChild(obj);
-      test1.push(obj);
     });
 
     chilli.setScale(0.3);
