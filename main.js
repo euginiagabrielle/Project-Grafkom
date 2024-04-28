@@ -1259,7 +1259,7 @@ function main() {
 
             //Sean start
             var sean_second = time / 1000;
-            yeDee.setRotateMove(LIBS.radToDeg(PHI), LIBS.radToDeg(THETA), 0);
+            yeDee.setRotateMove(0,0, 0);
             if (membesar) {
                 yeDee.addScale(0.001);
                 if (yeDee.scale[0] >= 0.33) {
