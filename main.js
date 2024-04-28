@@ -7,6 +7,12 @@ var kumisKanan = [];
 var mouthVertical = [];
 var test = [];
 
+var alis = [];
+var kumis_Atas = [];
+var kumis_Bawah = [];
+var arrmulut = [];
+var test1 = [];
+
 class MyObject {
     object_vertex = [];
     OBJECT_VERTEX = GL.createBuffer();
@@ -592,12 +598,6 @@ function main() {
     //Sean end
 
     //Euginia start
-    var alis = [];
-    var kumis_Atas = [];
-    var kumis_Bawah = [];
-    var arrmulut = [];
-    var test1 = [];
-
     // [KEPALA]
     // ---------- MUKA ---------- //
     var create = createElips(1.0, 36, 18, 1.8, 1.2, 1.0, 0, 0, 0, 0.5, 0.2, 0.8);
