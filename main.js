@@ -853,8 +853,9 @@ function main() {
             LIBS.set_I4(VIEWMATRIX);
             LIBS.rotateY(VIEWMATRIX, THETA);
             LIBS.rotateX(VIEWMATRIX, PHI);
-            LIBS.translateZ(VIEWMATRIX, -15);
-            LIBS.translateY(VIEWMATRIX, -1);
+            LIBS.rotateX(VIEWMATRIX, LIBS.degToRad(10));
+            LIBS.translateZ(VIEWMATRIX, -17);
+            LIBS.translateY(VIEWMATRIX, -2);
 
             //Sean start
             //...
