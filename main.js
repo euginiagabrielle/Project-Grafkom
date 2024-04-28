@@ -807,6 +807,356 @@ function main() {
     ];
     var tembokKiri = new objectTexture(persegi_vertex, persegi_faces, shader_vertex_sourceTex, shader_fragment_sourceTex, "ressources/stageWall.jpg");
     envSean.addChild(tembokKiri);
+
+    // KAKTUS //
+    var kaktus = new MyObject("kaktus", [], [], shader_vertex_source, shader_fragment_source);
+    var create_env = createElips(1, 36, 18, 0.3, 1, 0.3, 10, 0.5, -4, 0.2, 0.3, 0.1);
+    var kaktus1_vertex = create_env[0];
+    var kaktus1_faces = create_env[1];
+    var kaktus1 = new MyObject("kaktus1", kaktus1_vertex, kaktus1_faces, shader_vertex_source, shader_fragment_source);
+    kaktus.addChild(kaktus1);
+
+    create_env = createElips(1, 36, 18, 0.3, 1, 0.3, 8, 0.5, -4, 0.2, 0.3, 0.1);
+    var kaktus2_vertex = create_env[0];
+    var kaktus2_faces = create_env[1];
+    var kaktus2 = new MyObject("kaktus2", kaktus2_vertex, kaktus2_faces, shader_vertex_source, shader_fragment_source);
+    kaktus.addChild(kaktus2);
+
+    create_env = createElips(1, 36, 18, 0.3, 1, 0.3, -10, 0.5, -4, 0.2, 0.3, 0.1);
+    var kaktus3_vertex = create_env[0];
+    var kaktus3_faces = create_env[1];
+    var kaktus3 = new MyObject("kaktus3", kaktus3_vertex, kaktus3_faces, shader_vertex_source, shader_fragment_source);
+    kaktus.addChild(kaktus3);
+
+    create_env = createElips(1, 36, 18, 0.3, 1, 0.3, -8, 0.5, -4, 0.2, 0.3, 0.1);
+    var kaktus4_vertex = create_env[0];
+    var kaktus4_faces = create_env[1];
+    var kaktus4 = new MyObject("kaktus4", kaktus4_vertex, kaktus4_faces, shader_vertex_source, shader_fragment_source);
+    kaktus.addChild(kaktus4);
+
+    var create_env = createElips(1, 36, 18, 0.3, 1, 0.3, 10, 0.5, 5, 0.2, 0.3, 0.1);
+    var kaktus5_vertex = create_env[0];
+    var kaktus5_faces = create_env[1];
+    var kaktus5 = new MyObject("kaktus5", kaktus5_vertex, kaktus5_faces, shader_vertex_source, shader_fragment_source);
+    kaktus.addChild(kaktus5);
+
+    create_env = createElips(1, 36, 18, 0.3, 1, 0.3, -10, 0.5, 5, 0.2, 0.3, 0.1);
+    var kaktus6_vertex = create_env[0];
+    var kaktus6_faces = create_env[1];
+    var kaktus6 = new MyObject("kaktus6", kaktus6_vertex, kaktus6_faces, shader_vertex_source, shader_fragment_source);
+    kaktus.addChild(kaktus6);
+
+    create_env = createElips(1, 36, 18, 0.3, 1, 0.3, -0.65, -0.3, 6.55, 0.2, 0.3, 0.1);
+    var kaktus7_vertex = create_env[0];
+    var kaktus7_faces = create_env[1];
+    var kaktus7 = new MyObject("kaktus7", kaktus7_vertex, kaktus7_faces, shader_vertex_source, shader_fragment_source);
+    kaktus.addChild(kaktus7);
+
+    create_env = createElips(1, 36, 18, 0.3, 1, 0.3, 0.65, -0.3, 6.55, 0.2, 0.3, 0.1);
+    var kaktus8_vertex = create_env[0];
+    var kaktus8_faces = create_env[1];
+    var kaktus8 = new MyObject("kaktus8", kaktus8_vertex, kaktus8_faces, shader_vertex_source, shader_fragment_source);
+    kaktus.addChild(kaktus8);
+
+    create_env = createElips(1, 36, 18, 0.3, 1, 0.3, 2, -0.3, 6.55, 0.2, 0.3, 0.1);
+    var kaktus9_vertex = create_env[0];
+    var kaktus9_faces = create_env[1];
+    var kaktus9 = new MyObject("kaktus9", kaktus9_vertex, kaktus9_faces, shader_vertex_source, shader_fragment_source);
+    kaktus.addChild(kaktus9);
+
+    create_env = createElips(1, 36, 18, 0.3, 1, 0.3, -2, -0.3, 6.55, 0.2, 0.3, 0.1);
+    var kaktus10_vertex = create_env[0];
+    var kaktus10_faces = create_env[1];
+    var kaktus10 = new MyObject("kaktus10", kaktus10_vertex, kaktus10_faces, shader_vertex_source, shader_fragment_source);
+    kaktus.addChild(kaktus10);
+
+    // SPOTLIGHT //
+    var spotlight1 = new MyObject("spotlight1", [], [], shader_vertex_source, shader_fragment_source);
+    var stand1_vertex = [ 
+        4, -0.8, 6,     0.1, 0.1, 0.1,
+        5, -0.8, 6,     0.1, 0.1, 0.1,
+        5, -0.5, 6,     0.1, 0.1, 0.1,
+        4, -0.5, 6,     0.1, 0.1, 0.1,
+ 
+        5, -0.8, 5,     0.1, 0.1, 0.1,
+        4, -0.8, 5,     0.1, 0.1, 0.1,
+        5, -0.5, 5,     0.1, 0.1, 0.1,
+        4, -0.5, 5,     0.1, 0.1, 0.1,
+ 
+        4, -0.8, 6,     0.1, 0.1, 0.1,
+        4, -0.5, 6,     0.1, 0.1, 0.1,
+        4, -0.5, 5,     0.1, 0.1, 0.1,
+        4, -0.8, 5,     0.1, 0.1, 0.1,
+ 
+        5, -0.8, 6,     0.1, 0.1, 0.1,
+        5, -0.5, 6,     0.1, 0.1, 0.1,
+        5, -0.5, 5,     0.1, 0.1, 0.1,
+        5, -0.8, 5,     0.1, 0.1, 0.1,
+ 
+        4, -0.8, 6,     0.1, 0.1, 0.1,
+        4, -0.8, 5,     0.1, 0.1, 0.1,
+        5, -0.8, 5,     0.1, 0.1, 0.1,
+        5, -0.8, 6,     0.1, 0.1, 0.1,
+ 
+        4, -0.5, 6,     0.2, 0.2, 0.2,
+        4, -0.5, 5,     0.2, 0.2, 0.2,
+        5, -0.5, 5,     0.2, 0.2, 0.2,
+        5, -0.5, 6,     0.2, 0.2, 0.2
+    ];
+    var stand1_faces = [
+        0, 1, 2,
+        0, 2, 3,
+   
+        4, 5, 6,
+        4, 6, 7,
+   
+        8, 9, 10,
+        8, 10, 11,
+   
+        12, 13, 14,
+        12, 14, 15,
+   
+        16, 17, 18,
+        16, 18, 19,
+   
+        20, 21, 22,
+        20, 22, 23
+    ];
+    var stand1 = new MyObject("stand1", stand1_vertex, stand1_faces, shader_vertex_source, shader_fragment_source);
+    spotlight1.addChild(stand1);
+
+    var light1_vertex = [];
+    var light1_faces = []
+    create_env = createTabung(0.5, 0, 0, 0, 1, 0, 0, 0, light1_vertex, light1_faces);
+    light1_vertex = create_env[0];
+    light1_faces = create_env[1];
+    var light1 = new MyObject("light1", light1_vertex, light1_faces, shader_vertex_source, shader_fragment_source);
+    light1.translate = [4.5,0,5];
+    spotlight1.addChild(light1);
+
+    var circle1_vertex = [];
+    circle1_vertex.push(0.5,0,1.46);
+    circle1_vertex.push(1,1,1);
+    for (let i = 0; i <= 360; i++) {
+        circle1_vertex.push(0.5 * Math.cos(i/Math.PI));
+        circle1_vertex.push(0.5 * Math.sin(i/Math.PI));
+        circle1_vertex.push(1.46);
+        circle1_vertex.push(1);
+        circle1_vertex.push(1);
+        circle1_vertex.push(0);
+    }
+    var circle1_faces = [];
+    for (let i = 0; i < 360; i++) {
+        circle1_faces.push(0,i,i+1);
+    }
+    var light2 = new MyObject("light2", circle1_vertex, circle1_faces, shader_vertex_source, shader_fragment_source);
+    light2.translate = [4.5,0,3.5];
+    spotlight1.addChild(light2);
+
+    var spotlight2 = new MyObject("spotlight2", [], [], shader_vertex_source, shader_fragment_source);
+    var stand2_vertex = [ 
+        -4, -0.8, 6,     0.1, 0.1, 0.1,
+        -5, -0.8, 6,     0.1, 0.1, 0.1,
+        -5, -0.5, 6,     0.1, 0.1, 0.1,
+        -4, -0.5, 6,     0.1, 0.1, 0.1,
+ 
+        -5, -0.8, 5,     0.1, 0.1, 0.1,
+        -4, -0.8, 5,     0.1, 0.1, 0.1,
+        -5, -0.5, 5,     0.1, 0.1, 0.1,
+        -4, -0.5, 5,     0.1, 0.1, 0.1,
+ 
+        -4, -0.8, 6,     0.1, 0.1, 0.1,
+        -4, -0.5, 6,     0.1, 0.1, 0.1,
+        -4, -0.5, 5,     0.1, 0.1, 0.1,
+        -4, -0.8, 5,     0.1, 0.1, 0.1,
+ 
+        -5, -0.8, 6,     0.1, 0.1, 0.1,
+        -5, -0.5, 6,     0.1, 0.1, 0.1,
+        -5, -0.5, 5,     0.1, 0.1, 0.1,
+        -5, -0.8, 5,     0.1, 0.1, 0.1,
+ 
+        -4, -0.8, 6,     0.1, 0.1, 0.1,
+        -4, -0.8, 5,     0.1, 0.1, 0.1,
+        -5, -0.8, 5,     0.1, 0.1, 0.1,
+        -5, -0.8, 6,     0.1, 0.1, 0.1,
+ 
+        -4, -0.5, 6,     0.2, 0.2, 0.2,
+        -4, -0.5, 5,     0.2, 0.2, 0.2,
+        -5, -0.5, 5,     0.2, 0.2, 0.2,
+        -5, -0.5, 6,     0.2, 0.2, 0.2
+    ];
+    var stand2_faces = [
+        0, 1, 2,
+        0, 2, 3,
+   
+        4, 5, 6,
+        4, 6, 7,
+   
+        8, 9, 10,
+        8, 10, 11,
+   
+        12, 13, 14,
+        12, 14, 15,
+   
+        16, 17, 18,
+        16, 18, 19,
+   
+        20, 21, 22,
+        20, 22, 23
+    ];
+    var stand2 = new MyObject("stand2", stand2_vertex, stand2_faces, shader_vertex_source, shader_fragment_source);
+    spotlight2.addChild(stand2);
+
+    var light3_vertex = [];
+    var light3_faces = []
+    create_env = createTabung(0.5, 0, 0, 0, 1, 0, 0, 0, light3_vertex, light3_faces);
+    light3_vertex = create_env[0];
+    light3_faces = create_env[1];
+    var light3 = new MyObject("light3", light3_vertex, light3_faces, shader_vertex_source, shader_fragment_source);
+    light3.translate = [-4.5,0,5];
+    spotlight2.addChild(light3);
+
+    var circle2_vertex = [];
+    circle2_vertex.push(-0.5,0,1.46);
+    circle2_vertex.push(1,1,1);
+    for (let i = 0; i <= 360; i++) {
+        circle2_vertex.push(-0.5 * Math.cos(i/Math.PI));
+        circle2_vertex.push(0.5 * Math.sin(i/Math.PI));
+        circle2_vertex.push(1.46);
+        circle2_vertex.push(1);
+        circle2_vertex.push(1);
+        circle2_vertex.push(0);
+    }
+    var circle2_faces = [];
+    for (let i = 0; i < 360; i++) {
+        circle2_faces.push(0,i,i+1);
+    }
+    var light4 = new MyObject("light4", circle2_vertex, circle2_faces, shader_vertex_source, shader_fragment_source);
+    light4.translate = [-4.5,0,3.5];
+    spotlight2.addChild(light4);
+
+        // MIC 1 //
+    var mic1 = new MyObject("mic1", [], [], shader_vertex_source, shader_fragment_source);
+    var stand1_mic1_vertex = [];
+    var stand1_mic1_faces = [];
+    create_env = createTabung(0.1, 0, 0, 0, 1.5, 0, 0, 0, stand1_mic1_vertex, stand1_mic1_faces);
+    stand1_mic1_vertex = create_env[0];
+    stand1_mic1_faces = create_env[1];
+    var stand1_mic1 = new MyObject("stand1_mic1", stand1_mic1_vertex, stand1_mic1_faces, shader_vertex_source, shader_fragment_source);
+    stand1_mic1.translate = [5,0.1,2];
+    stand1_mic1.rotate = [15,0,0];
+    mic1.addChild(stand1_mic1);
+
+    var stand2_mic1_vertex = [];
+    var stand2_mic1_faces = [];
+    create_env = createTabung(0.1, 0, 0, 0, 1.5, 0, 0, 0, stand2_mic1_vertex, stand2_mic1_faces);
+    stand2_mic1_vertex = create_env[0];
+    stand2_mic1_faces = create_env[1];
+    var stand2_mic1 = new MyObject("stand2_mic1", stand2_mic1_vertex, stand2_mic1_faces, shader_vertex_source, shader_fragment_source);
+    stand2_mic1.translate = [-2,0.9,5];
+    stand2_mic1.rotate = [15,90,0];
+    mic1.addChild(stand2_mic1);
+
+    var stand3_mic1_vertex = [];
+    var stand3_mic1_faces = [];
+    create_env = createTabung(0.1, 0, 0, 0, 1.5, 0, 0, 0, stand3_mic1_vertex, stand3_mic1_faces);
+    stand3_mic1_vertex = create_env[0];
+    stand3_mic1_faces = create_env[1];
+    var stand3_mic1 = new MyObject("stand3_mic1", stand3_mic1_vertex, stand3_mic1_faces, shader_vertex_source, shader_fragment_source);
+    stand3_mic1.translate = [2,-1.8,-4.9];
+    stand3_mic1.rotate = [15,-90,0];
+    mic1.addChild(stand3_mic1);
+
+    var stand4_mic1_vertex = [];
+    var stand4_mic1_faces = [];
+    create_env = createTabung(0.1, 0, 0, 0, 1.5, 0, 0, 0, stand4_mic1_vertex, stand4_mic1_faces);
+    stand4_mic1_vertex = create_env[0];
+    stand4_mic1_faces = create_env[1];
+    var stand4_mic1 = new MyObject("stand4_mic1", stand4_mic1_vertex, stand4_mic1_faces, shader_vertex_source, shader_fragment_source);
+    stand4_mic1.translate = [5,2,-1];
+    stand4_mic1.rotate = [90,0,0];
+    mic1.addChild(stand4_mic1);
+
+    var stand5_mic1_vertex = [];
+    var stand5_mic1_faces = [];
+    create_env = createTabung(0.1, 0, 0, 0, 2, 0, 0, 0, stand5_mic1_vertex, stand5_mic1_faces);
+    stand5_mic1_vertex = create_env[0];
+    stand5_mic1_faces = create_env[1];
+    var stand5_mic1 = new MyObject("stand5_mic1", stand5_mic1_vertex, stand5_mic1_faces, shader_vertex_source, shader_fragment_source);
+    stand5_mic1.translate = [5,1.5,0.2];
+    stand5_mic1.rotate = [15,0,0];
+    mic1.addChild(stand5_mic1);
+
+    var circle_mic1_vertex = [];
+    var circle_mic1_faces = [];
+    create_env = createElips(0.2, 36, 18, 1, 1, 1, 0, 0, 0, 0.3, 0.3, 0.3);
+    circle_mic1_vertex = create_env[0];
+    circle_mic1_faces = create_env[1];
+    var circle_mic1 = new MyObject("circle_mic1", circle_mic1_vertex, circle_mic1_faces, shader_vertex_source, shader_fragment_source);
+    circle_mic1.translate = [5,1.45,0.5];
+    mic1.addChild(circle_mic1);
+
+    // MIC 2 //
+    var mic2 = new MyObject("mic2", [], [], shader_vertex_source, shader_fragment_source);
+    var stand1_mic2_vertex = [];
+    var stand1_mic2_faces = [];
+    create_env = createTabung(0.1, 0, 0, 0, 1.5, 0, 0, 0, stand1_mic2_vertex, stand1_mic2_faces);
+    stand1_mic2_vertex = create_env[0];
+    stand1_mic2_faces = create_env[1];
+    var stand1_mic2 = new MyObject("stand1_mic2", stand1_mic2_vertex, stand1_mic2_faces, shader_vertex_source, shader_fragment_source);
+    stand1_mic2.translate = [-5,0.1,2];
+    stand1_mic2.rotate = [15,0,0];
+    mic2.addChild(stand1_mic2);
+
+    var stand2_mic2_vertex = [];
+    var stand2_mic2_faces = [];
+    create_env = createTabung(0.1, 0, 0, 0, -1.5, 0, 0, 0, stand2_mic2_vertex, stand2_mic2_faces);
+    stand2_mic2_vertex = create_env[0];
+    stand2_mic2_faces = create_env[1];
+    var stand2_mic2 = new MyObject("stand2_mic2", stand2_mic2_vertex, stand2_mic2_faces, shader_vertex_source, shader_fragment_source);
+    stand2_mic2.translate = [-2,-1.6,-3.3];
+    stand2_mic2.rotate = [15,90,0];
+    mic1.addChild(stand2_mic2);
+
+    var stand3_mic2_vertex = [];
+    var stand3_mic2_faces = [];
+    create_env = createTabung(0.1, 0, 0, 0, -1.5, 0, 0, 0, stand3_mic2_vertex, stand3_mic2_faces);
+    stand3_mic2_vertex = create_env[0];
+    stand3_mic2_faces = create_env[1];
+    var stand3_mic2 = new MyObject("stand3_mic2", stand3_mic2_vertex, stand3_mic2_faces, shader_vertex_source, shader_fragment_source);
+    stand3_mic2.translate = [2,1,6.5];
+    stand3_mic2.rotate = [15,-90,0];
+    mic2.addChild(stand3_mic2);
+
+    var stand4_mic2_vertex = [];
+    var stand4_mic2_faces = [];
+    create_env = createTabung(0.1, 0, 0, 0, 1.5, 0, 0, 0, stand4_mic2_vertex, stand4_mic2_faces);
+    stand4_mic2_vertex = create_env[0];
+    stand4_mic2_faces = create_env[1];
+    var stand4_mic2 = new MyObject("stand4_mic2", stand4_mic2_vertex, stand4_mic2_faces, shader_vertex_source, shader_fragment_source);
+    stand4_mic2.translate = [-5,2,-1];
+    stand4_mic2.rotate = [90,0,0];
+    mic2.addChild(stand4_mic2);
+
+    var stand5_mic2_vertex = [];
+    var stand5_mic2_faces = [];
+    create_env = createTabung(0.1, 0, 0, 0, 2, 0, 0, 0, stand5_mic2_vertex, stand5_mic2_faces);
+    stand5_mic2_vertex = create_env[0];
+    stand5_mic2_faces = create_env[1];
+    var stand5_mic2 = new MyObject("stand5_mic2", stand5_mic2_vertex, stand5_mic2_faces, shader_vertex_source, shader_fragment_source);
+    stand5_mic2.translate = [-5,1.5,0.2];
+    stand5_mic2.rotate = [15,0,0];
+    mic2.addChild(stand5_mic2);
+
+    var circle_mic2_vertex = [];
+    var circle_mic2_faces = [];
+    create_env = createElips(0.2, 36, 18, 1, 1, 1, 0, 0, 0, 0.3, 0.3, 0.3);
+    circle_mic2_vertex = create_env[0];
+    circle_mic2_faces = create_env[1];
+    var circle_mic2 = new MyObject("circle_mic2", circle_mic2_vertex, circle_mic2_faces, shader_vertex_source, shader_fragment_source);
+    circle_mic2.translate = [-5,1.45,0.5];
+    mic2.addChild(circle_mic2);
+
     //...
     //env end
 
@@ -880,6 +1230,30 @@ function main() {
         envSean.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
         envSean.draw();
         envSean.setIdentityMove();
+
+        kaktus.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
+        kaktus.draw();
+        kaktus.setIdentityMove();
+        
+        spotlight1.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
+        spotlight1.draw();
+        spotlight1.setIdentityMove();
+        spotlight1.setRotateMove(0,0,0);
+
+        spotlight2.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
+        spotlight2.draw();
+        spotlight2.setIdentityMove();
+        spotlight2.setRotateMove(0,0,0);
+
+        mic1.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
+        mic1.draw();
+        mic1.setIdentityMove();
+        mic1.setRotateMove(0,0,0);
+
+        mic2.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
+        mic2.draw();
+        mic2.setIdentityMove();
+        mic2.setRotateMove(0,0,0);
         //...
         //env end
         
