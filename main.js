@@ -190,6 +190,132 @@ class MyObject {
     }
 }
 
+class objectTexture {
+    CANVAS = document.getElementById("your_canvas");
+    cube_vertex = [];
+    CUBE_VERTEX;
+    cube_faces = [];
+    CUBE_FACES;
+    shader_vertex_source = null;
+    shader_fragment_source = null;
+
+    MOVEMATRIX = LIBS.get_I4();
+
+    child = [];
+
+    compile_shader = function (source, type, typeString) {
+        var shader = GL.createShader(type);
+        GL.shaderSource(shader, source);
+        GL.compileShader(shader);
+        if (!GL.getShaderParameter(shader, GL.COMPILE_STATUS)) {
+            alert("ERROR IN " + typeString + " SHADER: " + GL.getShaderInfoLog(shader));
+            return false;
+        }
+        return shader;
+    };
+
+    shader_vertex;
+    shader_fragment;
+
+    _Pmatrix;
+    _Vmatrix;
+    _Mmatrix;
+    _sampler;
+    cube_texture;
+
+
+    _color;
+    _position;
+
+    SHADER_PROGRAM = GL.createProgram();
+
+    constructor(cube_vertex, cube_faces, shader_vertex, shader_fragment, texture) {
+        this.cube_vertex = cube_vertex;
+        this.cube_faces = cube_faces;
+        this.shader_vertex_source = shader_vertex;
+        this.shader_fragment_source = shader_fragment;
+
+        this.shader_vertex = this.compile_shader(this.shader_vertex_source, GL.VERTEX_SHADER, "VERTEX");
+        this.shader_fragment = this.compile_shader(this.shader_fragment_source, GL.FRAGMENT_SHADER, "FRAGMENT");
+
+        this.SHADER_PROGRAM = GL.createProgram();
+
+        GL.attachShader(this.SHADER_PROGRAM, this.shader_vertex);
+        GL.attachShader(this.SHADER_PROGRAM, this.shader_fragment);
+
+        GL.linkProgram(this.SHADER_PROGRAM);
+
+        this._Pmatrix = GL.getUniformLocation(this.SHADER_PROGRAM, "Pmatrix");
+        this._Vmatrix = GL.getUniformLocation(this.SHADER_PROGRAM, "Vmatrix");
+        this._Mmatrix = GL.getUniformLocation(this.SHADER_PROGRAM, "Mmatrix");
+
+        this._sampler = GL.getUniformLocation(this.SHADER_PROGRAM, "sampler");
+
+        this._color = GL.getAttribLocation(this.SHADER_PROGRAM, "uv");
+        this._position = GL.getAttribLocation(this.SHADER_PROGRAM, "position");
+
+        GL.enableVertexAttribArray(this._color);
+        GL.enableVertexAttribArray(this._position);
+
+        GL.useProgram(this.SHADER_PROGRAM);
+        GL.uniform1i(this._sampler, 0);
+
+        this.CUBE_VERTEX = GL.createBuffer();
+        this.CUBE_FACES = GL.createBuffer();
+
+        GL.bindBuffer(GL.ARRAY_BUFFER, this.CUBE_VERTEX);
+        GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(this.cube_vertex), GL.STATIC_DRAW);
+
+        GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.CUBE_FACES);
+        GL.bufferData(GL.ELEMENT_ARRAY_BUFFER,
+            new Uint16Array(this.cube_faces),
+            GL.STATIC_DRAW);
+
+        this.cube_texture = LIBS.loadTexture(texture); 
+    }
+    setuniformmatrix4(PROJMATRIX, VIEWMATRIX) {
+        GL.useProgram(this.SHADER_PROGRAM);
+        GL.uniformMatrix4fv(this._Pmatrix, false, PROJMATRIX);
+        GL.uniformMatrix4fv(this._Vmatrix, false, VIEWMATRIX);
+        GL.uniformMatrix4fv(this._Mmatrix, false, this.MOVEMATRIX);
+
+    }
+    draw() {
+        GL.useProgram(this.SHADER_PROGRAM);
+        GL.activeTexture(GL.TEXTURE0);
+        GL.bindTexture(GL.TEXTURE_2D, this.cube_texture);
+
+        GL.bindBuffer(GL.ARRAY_BUFFER, this.CUBE_VERTEX);
+        GL.vertexAttribPointer(this._position, 3, GL.FLOAT, false, 4 * (3 + 2), 0);
+        GL.vertexAttribPointer(this._color, 2, GL.FLOAT, false, 4 * (3 + 2), 3 * 4);
+
+        GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.CUBE_FACES);
+        GL.drawElements(GL.TRIANGLE_STRIP, this.cube_faces.length, GL.UNSIGNED_SHORT, 0);
+        //GL.drawArrays(GL.TRIANGLES, 0, this.cube_vertex.length/6);
+        for (let i = 0; i < this.child.length; i++) {
+            this.child[i].draw();
+        }
+    }
+    getMoveMatrix() {
+        return this.MOVEMATRIX;
+    }
+    setRotateMove(phi, theta, r) {
+        LIBS.rotateZ(this.MOVEMATRIX, r);
+        LIBS.rotateY(this.MOVEMATRIX, theta);
+        LIBS.rotateX(this.MOVEMATRIX, phi);
+    }
+    setTranslateMove(x, y, z) {
+        LIBS.translateX(this.MOVEMATRIX, z);
+        LIBS.translateX(this.MOVEMATRIX, y);
+        LIBS.translateX(this.MOVEMATRIX, x);
+    }
+    setIdentityMove() {
+        LIBS.set_I4(this.MOVEMATRIX);
+    }
+    addChild(child) {
+        this.child.push(child);
+    }
+}
 
 function main() {
     var CANVAS = document.getElementById('mycanvas');
@@ -330,6 +456,29 @@ function main() {
         gl_FragColor = vec4(vColor,1.0);
     }
     `
+
+    var shader_vertex_sourceTex = "\n\
+  attribute vec3 position;\n\
+  uniform mat4 Pmatrix, Vmatrix, Mmatrix;\n\
+  attribute vec2 uv;\n\
+  varying vec2 vUV;\n\
+  \n\
+  void main(void) {\n\
+  gl_Position = Pmatrix * Vmatrix * Mmatrix * vec4(position, 1.);\n\
+  vUV=uv;\n\
+  }";
+
+    var shader_fragment_sourceTex = "\n\
+  precision mediump float;\n\
+  uniform sampler2D sampler;\n\
+  varying vec2 vUV;\n\
+  \n\
+  \n\
+  void main(void) {\n\
+  gl_FragColor = texture2D(sampler, vUV);\n\
+  //gl_FragColor = vec4(1.,1.,1.,1.);\n\
+  }";
+
     function addXYZ(vertex, newX, newY, newZ) {
         console.log(vertex);
         for (let index = 0; index < vertex.length; index += 6) {
@@ -584,9 +733,80 @@ function main() {
     };
 
     //env start
-    var persegi_vertex = [3, -0.8, 3, 0.4, 0.5, 0.6, -3,-0.8,3, 0.4, 0.5, 0.6, 3,-0.8,-3, 0.4, 0.5, 0.6, -3, -0.8, -3, 0.4, 0.5, 0.6];
-    var persegi_faces = [0, 1, 2, 2, 1, 3];
-    var lantai = new MyObject("persegi", persegi_vertex, persegi_faces, shader_vertex_source, shader_fragment_source);
+    var env = new MyObject("env", [],[], shader_vertex_source, shader_fragment_source);
+
+    var persegi_vertex = [
+        12, -0.8, 6,    0,0,
+        -12,-0.8,6,     1,0,
+        12,-0.8,-6,     0,1,
+        -12,-0.8,-6,    1,1,
+      ];
+
+    persegi_faces = [
+        0, 1, 2, 2, 1, 3
+    ];
+    var lantai = new objectTexture(persegi_vertex, persegi_faces, shader_vertex_sourceTex, shader_fragment_sourceTex, "ressources/floor2.jpeg");
+    env.addChild(lantai);
+    var persegi_vertex = [
+        12, -0.81, 6,    0,0,0,
+        -12,-0.81,6,     0,0,0,
+        12,-0.81,-6,     0,0,0,
+        -12,-0.81,-6,    0,0,0,
+
+        12, -1.5, 6,    0,0,0,
+        -12,-1.5,6,     0,0,0,
+        12,-1.5,-6,     0,0,0,
+        -12,-1.5,-6,    0,0,0
+      ];
+      persegi_faces = [
+        0, 1, 2, 2, 1, 3,
+        4,5,6, 6,5,7,
+        7,6,2, 7,2,3,
+        5,6,2, 5,2,1,
+        4,7,3, 4,3,0,
+        4,5,1, 4,1,0
+    ];
+    var dasar = new MyObject("persegi", persegi_vertex, persegi_faces, shader_vertex_source, shader_fragment_source);
+    env.addChild(dasar);
+    
+    var persegi_vertex = [
+        -6,-0.8,-6,    0,0,
+        6,-0.8,-6,     1,0,
+        6,5,-6,     1,1,
+        -6,5,-6,    0,1,
+      ];
+
+    persegi_faces = [
+        0, 1, 2, 0,2,3
+    ];
+    var tembokTengah = new objectTexture(persegi_vertex, persegi_faces, shader_vertex_sourceTex, shader_fragment_sourceTex, "ressources/stageWallMid.jpg");
+    env.addChild(tembokTengah);
+
+    var persegi_vertex = [
+        -12,-0.8,-5,    0,0,
+        -6,-0.8,-5,     1,0,
+        -6,5,-5,     1,1,
+        -12,5,-5,    0,1,
+      ];
+
+    persegi_faces = [
+        0, 1, 2, 0,2,3
+    ];
+    var tembokKanan = new objectTexture(persegi_vertex, persegi_faces, shader_vertex_sourceTex, shader_fragment_sourceTex, "ressources/stageWall.jpg");
+    env.addChild(tembokKanan);
+
+    var persegi_vertex = [
+        12,-0.8,-5,    0,0,
+        6,-0.8,-5,     1,0,
+        6,5,-5,     1,1,
+        12,5,-5,    0,1,
+      ];
+
+    persegi_faces = [
+        0, 1, 2, 0,2,3
+    ];
+    var tembokKiri = new objectTexture(persegi_vertex, persegi_faces, shader_vertex_sourceTex, shader_fragment_sourceTex, "ressources/stageWall.jpg");
+    env.addChild(tembokKiri);
     //...
     //env end
 
@@ -1010,7 +1230,6 @@ function main() {
     var PROJMATRIX = LIBS.get_projection(40, CANVAS.width / CANVAS.height, 1, 100);
     var VIEWMATRIX = LIBS.get_I4();
 
-    LIBS.translateZ(VIEWMATRIX, -5);
 
     //DRAWING
     GL.clearColor(0.0, 0.0, 0.0, 0.0);
@@ -1032,9 +1251,11 @@ function main() {
                 PHI += dY;
             }
             //cam rotate
-            // LIBS.set_I4(VIEWMATRIX);
-            // LIBS.rotateY(VIEWMATRIX, THETA);
-            // LIBS.rotateX(VIEWMATRIX, PHI);
+            LIBS.set_I4(VIEWMATRIX);
+            LIBS.rotateY(VIEWMATRIX, THETA);
+            LIBS.rotateX(VIEWMATRIX, PHI);
+            LIBS.translateZ(VIEWMATRIX, -15);
+            LIBS.translateY(VIEWMATRIX, -1);
 
             //Sean start
             var sean_second = time / 1000;
@@ -1069,9 +1290,9 @@ function main() {
         GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 
         //env start
-        lantai.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
-        lantai.draw();
-        lantai.setIdentityMove();
+        env.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
+        env.draw();
+        env.setIdentityMove();
         //...
         //env end
         
