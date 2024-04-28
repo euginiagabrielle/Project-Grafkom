@@ -165,7 +165,7 @@ class MyObject {
         let z = this.scale[2] + s;
         this.scale = [x, y, z];
         this.child.forEach(obj => {
-            obj.setScale(s);
+            obj.addScale(s);
         });
     }
     setIdentityMove() {
@@ -861,7 +861,7 @@ function main() {
         test.push(obj);
     });
 
-    woopy.setScale(0.1);
+    woopy.setScale(0.3);
     // telinga.addScale(1);
 
     //MATRIX
@@ -903,16 +903,19 @@ function main() {
             woopy.setRotateMove(LIBS.radToDeg(PHI), LIBS.radToDeg(THETA), 0);
     
             // Animasi telinga membesar secara lebih halus
-            if (time - nextTime > 1000 && telinga.scale[0] < 4) {
+            
                 if (membesar) {
-                    telinga.addScale(1.001); // Meningkatkan skala lebih halus
-                    membesar = false;
-                    nextTime = time;
+                    console.log("a");
+                    woopy.addScale(0.001); // Meningkatkan skala lebih halus
+                    if(woopy.scale[0]>=0.4){
+                        membesar = false;
+                    }
+                    // nextTime = time;
                 } else {
-                    telinga.setScale(1); // Reset skala
+                    woopy.addScale(-0.02); // Reset skala
                     membesar = true;
                 }
-            }
+            
     
             time_prev = time;
         }
