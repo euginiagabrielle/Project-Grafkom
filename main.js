@@ -2058,12 +2058,12 @@ function main() {
             chilli.setRotateMove(LIBS.radToDeg(PHI), LIBS.radToDeg(THETA), 0);
             if (euginia_membesar) {
               chilli.addScale(0.001);
-              if (chilli.scale[0] >= 0.35) {
+              if (chilli.scale[0] >= 0.4) {
                 euginia_membesar = false;
               }
             } else {
               chilli.addScale(-0.001);
-              if (chilli.scale[0] <= 0.35) {
+              if (chilli.scale[0] <= 0.3) {
                 euginia_membesar = true;
               }
             }
