@@ -11,6 +11,10 @@ var kumis_Atas = [];
 var kumis_Bawah = [];
 var arrmulut = [];
 
+var line = [];
+var kumisKanan = [];
+var mouthVertical = [];
+
 
 class MyObject {
     object_vertex = [];
@@ -2000,7 +2004,269 @@ function main() {
     //Euginia end
 
     //Willy start
+    var woopy = new MyObject("woopy", [], [], shader_vertex_source, shader_fragment_source);
+
+    var calculate = createElips(1.0, 36, 18, 1.8, 1.2, 1.0, 0, 0, 0,  0, 0, 128);
+    var elipsHead_vertex = calculate[0];
+    var elipsHead_faces = calculate[1];
+    var headluar = new MyObject("head", elipsHead_vertex, elipsHead_faces, shader_vertex_source, shader_fragment_source);
+    woopy.addChild(headluar);
+
+    calculate = createElips(1.15, 36, 18, 1.0, 0.8, 1.0, 0, 0, 0, 255, 255 , 255);
+    var elipsFace_vertex = calculate[0];
+    var elipsFace_faces = calculate[1];
+    var faceDalam = new MyObject("face", elipsFace_vertex, elipsFace_faces, shader_vertex_source, shader_fragment_source);
+    faceDalam.translate = [0, -0.1, 0.5];
+    headluar.addChild(faceDalam);
+
     
+    calculate = createElipPara(0.5, 36, 18, 0.55, 0.55, 1.5, 0, 0, 0, 255,0,0);
+    var ekor_vertex = calculate[0];
+    var ekor_faces = calculate[1];
+    var ekor = new MyObject("ekor", ekor_vertex, ekor_faces, shader_vertex_source, shader_fragment_source);
+    //rotate y +10, trans y +0.4
+    //rotate y -10, trans y -0.4
+    ekor.translate = [0, 0, 1];
+    ekor.rotate = [150, 0, 0];
+    headluar.addChild(ekor);
+    var telinga = new MyObject("telinga", [], [], shader_vertex_source, shader_fragment_source);
+    faceDalam.addChild(telinga);
+
+    calculate = createElipPara(0.5, 36, 18, 0.55, 0.55, 1.5, 0, 0, 0,  255, 0, 0 );
+    var telingaKanan_vertex = calculate[0];
+    var telingaKanan_faces = calculate[1];
+    var telingaKanan = new MyObject("telingaKanan", telingaKanan_vertex, telingaKanan_faces, shader_vertex_source, shader_fragment_source);
+    //rotate y +10, trans y +0.4
+    //rotate y -10, trans y -0.4
+    telingaKanan.translate = [-0.75, 0, 1];
+    telingaKanan.rotate = [270, 0, 0];
+    headluar.addChild(telingaKanan);
+
+    calculate = createElipPara(0.5, 36, 18, 0.55, 0.55, 1.5, 0, 0, 0, 255, 0, 0);
+    var telingaKiri_vertex = calculate[0];
+    var telingaKiri_faces = calculate[1];
+    var telingaKiri = new MyObject("telingaKiri", telingaKiri_vertex, telingaKiri_faces, shader_vertex_source, shader_fragment_source);
+    telingaKiri.translate = [0.75, 0, 1];
+    //rotate y +10, trans y +0.4
+    //rotate y -10, trans y -0.4
+    telingaKiri.rotate = [270, 0, 0];
+    headluar.addChild(telingaKiri);
+
+    var lenganKiri_vertex = [];
+    var lenganKiri_faces = [];
+    var calculate = createTabung(0.2, 0, 0, 0, 0.8,0,0,1, lenganKiri_vertex, lenganKiri_faces);
+    lenganKiri_vertex = calculate[0];
+    lenganKiri_faces = calculate[1];
+    var lenganKiri = new MyObject("lenganKiri", lenganKiri_vertex, lenganKiri_faces, shader_vertex_source, shader_fragment_source);
+    lenganKiri.translate = [1.5, 0, -0.7];
+    lenganKiri.rotate = [180, 0,0];
+    headluar.addChild(lenganKiri);
+
+    var lenganKanan_vertex = [];
+    var lenganKanan_faces = [];
+    var calculate = createTabung(0.2, 0, 0, 0, 0.8,0,0,1, lenganKanan_vertex, lenganKanan_faces);
+    lenganKanan_vertex = calculate[0];
+    lenganKanan_faces = calculate[1];
+    var lenganKanan = new MyObject("lenganKanan", lenganKanan_vertex, lenganKanan_faces, shader_vertex_source, shader_fragment_source);
+    lenganKanan.translate = [-1.5, 0,-0.7];
+    lenganKanan.rotate = [180, 0, 0];
+    headluar.addChild(lenganKanan);
+
+    calculate = createElipPara(0.2, 36, 18, 1, 1, 2, 0, 0, 0,  255, 255, 255);
+    var tanganKiri_vertex = calculate[0];
+    var tanganKiri_faces = calculate[1];
+    var tanganKiri = new MyObject("tanganKiri", tanganKiri_vertex, tanganKiri_faces, shader_vertex_source, shader_fragment_source);
+    tanganKiri.translate = [1.5, 0, 0.7];
+    tanganKiri.rotate = [360, 0, 0];
+    woopy.addChild(tanganKiri);
+
+    calculate = createElipPara(0.2, 36, 18, 1, 1, 2, 0, 0, 0, 255, 255, 255);
+    var tanganKanan_vertex = calculate[0];
+    var tanganKanan_faces = calculate[1];
+    var tanganKanan = new MyObject("tanganKanan", tanganKanan_vertex, tanganKanan_faces, shader_vertex_source, shader_fragment_source);
+    tanganKanan.translate = [-1.5, 0,0.7];
+    tanganKanan.rotate = [360, 0, 0];
+    woopy.addChild(tanganKanan);
+
+    var pahaKanan_vertex = [];
+    var pahaKanan_faces = [];
+    var calculate = createTabung(0.2, 0, 0, 0, 0.8, 0, 0, 1,lenganKanan_vertex, lenganKanan_faces);
+    pahaKanan_vertex = calculate[0];
+    pahaKanan_faces = calculate[1];
+    var pahaKanan = new MyObject("pahaKanan", pahaKanan_vertex, pahaKanan_faces, shader_vertex_source, shader_fragment_source);
+    pahaKanan.translate = [-0.5, 0,0.5];
+    pahaKanan.rotate = [90, 0, 0];
+    headluar.addChild(pahaKanan);
+    
+    calculate = createElipPara(0.2, 36, 18, 1, 1, 2, 0, 0, 0, 255, 255, 255);
+    var kakiKanan_vertex = calculate[0];
+    var kakiKanan_faces = calculate[1];
+    var kakiKanan = new MyObject("kakiKanan", kakiKanan_vertex, kakiKanan_faces, shader_vertex_source, shader_fragment_source);
+    kakiKanan.translate = [-0.5, 0,1.2];
+    kakiKanan.rotate = [90, 0, 0];
+    woopy.addChild(kakiKanan);
+
+    var pahaKiri_vertex = [];
+    var pahaKiri_faces = [];
+    var calculate = createTabung(0.2, 0, 0, 0, 0.8, 0,0,1, lenganKanan_vertex, lenganKanan_faces);
+    pahaKiri_vertex = calculate[0];
+    pahaKiri_faces = calculate[1];
+    var pahaKiri = new MyObject("pahaKiri", pahaKiri_vertex, pahaKiri_faces, shader_vertex_source, shader_fragment_source);
+    pahaKiri.translate = [0.2, 0,0.5];
+    pahaKiri.rotate = [90, 0, 0];
+    headluar.addChild(pahaKiri);
+    
+    calculate = createElipPara(0.2, 36, 18, 1, 1, 2, 0, 0, 0, 255, 255, 255);
+    var kakiKiri_vertex = calculate[0];
+    var kakiKiri_faces = calculate[1];
+    var kakiKiri = new MyObject("kakiKiri", kakiKiri_vertex, kakiKiri_faces, shader_vertex_source, shader_fragment_source);
+    kakiKiri.translate = [0.2, 0,1.2];
+    kakiKiri.rotate = [90, 0, 0];
+    woopy.addChild(kakiKiri);
+
+
+    var calculate = createElips(0.37, 36, 18, 1, 1, 1, 0, 0, 0, 255,  255, 0);
+    var ronaKiri_vertex = calculate[0];
+    var ronaKiri_faces = calculate[1];
+    var ronaKiri = new MyObject("ronaKiri", ronaKiri_vertex, ronaKiri_faces, shader_vertex_source, shader_fragment_source);
+    ronaKiri.translate = [0.6, -0.4, 1.1];
+    headluar.addChild(ronaKiri);
+
+    var calculate = createElips(0.37, 36, 18, 1, 1, 1, 0, 0, 0, 255,  255, 0);
+    var ronaKanan_vertex = calculate[0];
+    var ronaKanan_faces = calculate[1];
+    var ronaKanan = new MyObject("ronaKanan", ronaKanan_vertex, ronaKanan_faces, shader_vertex_source, shader_fragment_source);
+    ronaKanan.translate = [-0.6, -0.4, 1.1];
+    headluar.addChild(ronaKanan);
+
+  
+    var eyes = [];
+    var eyeLeft_vertex = [];
+    var eyeLeft_faces = [];
+    r = 0.1;
+    for (let index = 0; index <= 360; index++) {
+        var x = r * Math.cos(LIBS.degToRad(index));
+        var y = r * Math.sin(LIBS.degToRad(index));
+        eyeLeft_vertex.push(x - 0.33);
+        eyeLeft_vertex.push(y);
+        eyeLeft_vertex.push(1.65);
+        eyeLeft_vertex.push(0, 0, 0);
+    }
+    for (let index = 0; index <= 360; index++) {
+        eyeLeft_faces.push(0, index, index + 1);
+    }
+    var eye = new MyObject("mataKanan", eyeLeft_vertex, eyeLeft_faces, shader_vertex_source, shader_fragment_source);
+    eyes.push(eye);
+    var eyeRight_vertex = [];
+    var eyeRight_faces = [];
+    r = 0.1;
+    for (let index = 0; index <= 360; index++) {
+        var x = r * Math.cos(LIBS.degToRad(index));
+        var y = r * Math.sin(LIBS.degToRad(index));
+        eyeRight_vertex.push(x + 0.33);
+        eyeRight_vertex.push(y);
+        eyeRight_vertex.push(1.65);
+        eyeRight_vertex.push(0, 0, 0);
+    }
+    for (let index = 0; index <= 360; index++) {
+        eyeRight_faces.push(0, index, index + 1);
+    }
+    eye = new MyObject("mataKiri", eyeRight_vertex, eyeRight_faces, shader_vertex_source, shader_fragment_source);
+    eyes.push(eye);
+
+    var eyeMid_vertex = [];
+    var eyeMid_faces = [];
+    r = 0.1;
+    for (let index = 0; index <= 360; index++) {
+        var x = r * Math.cos(LIBS.degToRad(index));
+        var y = r * Math.sin(LIBS.degToRad(index));
+        eyeMid_vertex.push(x + 0);
+        eyeMid_vertex.push(y - 1.2);
+        eyeMid_vertex.push(0.53);
+        eyeMid_vertex.push(0, 0, 0);
+    }
+    for (let index = 0; index <= 360; index++) {
+        eyeMid_faces.push(0, index, index + 1);
+    }
+
+
+    var curve = [0.0, 0.0, 0.2, -0.1, 0.2, 0];
+    yStart = -0.4;
+    for (let index = 0; index < 4; index++) {
+        var line_vertex = bezier.generateBSpline(curve, 100, 2, -0.1, yStart, 1.58);
+        var line_faces = [];
+        for (let index = 0; index < line_vertex.length / 6; index++) {
+            line_faces.push(index);
+        }
+        var mouth1 = new MyObject("mulutCurve", line_vertex, line_faces, shader_vertex_source, shader_fragment_source);
+        yStart += 0.005;
+        line.push(mouth1);
+    }
+    
+    var curve = [0.0, 0.0, 0.2, -0.1, 0.2, 0];
+    yStart = -0.4;
+    for (let index = 0; index < 4; index++) {
+        var line_vertex = bezier.generateBSpline(curve, 100, 2, 0.1, yStart, 1.58);
+        var line_faces = [];
+        for (let index = 0; index < line_vertex.length / 6; index++) {
+            line_faces.push(index);
+        }
+        var mouth2 = new MyObject("mulutCurve", line_vertex, line_faces, shader_vertex_source, shader_fragment_source);
+        yStart += 0.005;
+        line.push(mouth2);
+    }
+
+    curve = [0.0, 0.0, 0.1, 0.1, 0.2, 0];
+    yStart = 0.2;
+    for (let index = 0; index < 4; index++) {
+        var line_vertex = bezier.generateBSpline(curve, 100, 2, -0.45, yStart, 1.58);
+        var line_faces = [];
+        for (let index = 0; index < line_vertex.length / 6; index++) {
+            line_faces.push(index);
+        }
+        var alisKanan = new MyObject("alisKanan", line_vertex, line_faces, shader_vertex_source, shader_fragment_source);
+        yStart += 0.005;
+        line.push(alisKanan);
+    }
+    curve = [0.0, 0.0, 0.1, 0.1, 0.2, 0];
+    yStart = 0.2;
+    for (let index = 0; index < 4; index++) {
+        var line_vertex = bezier.generateBSpline(curve, 100, 2, 0.25, yStart, 1.58);
+        var line_faces = [];
+        for (let index = 0; index < line_vertex.length / 6; index++) {
+            line_faces.push(index);
+        }
+        var alisKiri = new MyObject("alisKiri", line_vertex, line_faces, shader_vertex_source, shader_fragment_source);
+        yStart += 0.005;
+        line.push(alisKiri);
+    }
+
+
+    
+
+   
+   
+
+    line.forEach(obj => {
+        headluar.addChild(obj);
+    });
+
+    mouthVertical.forEach(obj => {
+        headluar.addChild(obj);
+    });
+
+
+    eyes.forEach(obj => {
+        headluar.addChild(obj);
+    });
+
+    woopy.setScale(0.1);
+    var membesar = true;
+    var nextTime = 0;
+    var ganjil = false;
+    var genap = true;
+    var maju = true;
+    var mundur = false;
     //...
     //Willy end
     
@@ -2055,7 +2321,7 @@ function main() {
         
             //Euginia start
             var euginia_second = time / 1000;
-            chilli.setRotateMove(LIBS.radToDeg(PHI), LIBS.radToDeg(THETA), 0);
+            chilli.setRotateMove(0,0,0);
             if (euginia_membesar) {
               chilli.addScale(0.001);
               if (chilli.scale[0] >= 0.4) {
@@ -2071,7 +2337,22 @@ function main() {
             //Euginia end
         
             //Willy start
-            
+            var second = time / 1000; // Konversi milidetik ke detik
+    
+            // Memperbarui transformasi rotasi dan translasi berdasarkan input
+            woopy.setRotateMove(0,0,0);
+    
+            // Animasi telinga membesar secara lebih halus
+            if (time - nextTime > 1000 && telinga.scale[0] < 4) {
+                if (membesar) {
+                    telinga.addScale(1.001); // Meningkatkan skala lebih halus
+                    membesar = false;
+                    nextTime = time;
+                } else {
+                    telinga.setScale(1); // Reset skala
+                    membesar = true;
+                }
+            }
             //...
             //Willy end
             
@@ -2174,8 +2455,7 @@ function main() {
         if (sean_second >= 12) { //for looping animation
             sean_second = sean_second % 12;
         }
-        // //Rotate at arbitrary axis...APPROVE
-        // // bisa tanpa translasi, lgsg pakai entrance movement
+        
         if (sean_second >= 4 & sean_second <= 5) {
             yeDee.setTranslateMove(-0.1, 0, 0);
         }
@@ -2185,7 +2465,6 @@ function main() {
         if (sean_second >= 11 & sean_second <= 12) {
             yeDee.setTranslateMove(0.1,0,0);
         }
-        
         //...
         //Sean end
         
@@ -2285,7 +2564,98 @@ function main() {
         //Euginia end
         
         //Willy start
-            
+        woopy.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
+        woopy.draw();
+        woopy.setIdentityMove();
+    
+        // Animasi kaki dengan pergerakan yang lebih kecil dan lebih detail
+        var rotationAmount = 5; // Mengurangi jumlah rotasi
+        var moveAmount = 0.1; // Mengurangi jarak translasi
+    
+        if (second >= nextTime) {
+            if (genap) {
+              if (maju) {
+                  kakiKanan.setRotate(10,0,0);
+                  kakiKanan.setTranslateMove(0,0.3,0);
+                  lenganKiri.setRotate(10,0,0);
+                  tanganKiri.setRotate(10,0,0);
+                  
+              } else if (mundur){
+                  kakiKanan.setRotate(-10,0,0);
+                  kakiKanan.setTranslateMove(0,-0.3,0);
+                  lenganKiri.setRotate(-10,0,0);
+                  tanganKiri.setRotate(-10,0,0);
+              }
+              if (mundur) {
+                  kakiKiri.setRotate(10,0,0);
+                  kakiKiri.setTranslateMove(0,0.3,0);
+                  lenganKanan.setRotate(10,0,0);
+                  tanganKanan.setRotate(10,0,0);
+              } else if (maju){
+                  kakiKiri.setRotate(-10,0,0);
+                  kakiKiri.setTranslateMove(0,-0.3,0);
+                  lenganKanan.setRotate(-10,0,0);
+                  tanganKanan.setRotate(-10,0,0);
+              }
+                genap = false;
+                ganjil = true;
+          } else if (ganjil) {
+              if (maju) {
+                  kakiKanan.setRotate(-10,0,0);
+                  kakiKanan.setTranslateMove(0,-0.3,0);
+                  lenganKiri.setRotate(-10,0,0);
+                  tanganKiri.setRotate(-10,0,0);
+                  maju = false;
+                  mundur = true;
+              } else if (mundur) {
+                  kakiKanan.setRotate(10,0,0);
+                  kakiKanan.setTranslateMove(0,0.3,0);
+                  lenganKiri.setRotate(10,0,0);
+                  tanganKiri.setRotate(10,0,0);
+                  maju = true;
+                  mundur = false;
+              }
+              if (mundur) {
+                  kakiKiri.setRotate(-10,0,0);
+                  kakiKiri.setTranslateMove(0,-0.3,0);
+                  lenganKanan.setRotate(-10,0,0);
+                  tanganKanan.setRotate(-10,0,0);
+                  maju = false;
+                  mundur = true;
+              } else if (maju) {
+                  kakiKiri.setRotate(10,0,0);
+                  kakiKiri.setTranslateMove(0,0.3,0);
+                  lenganKanan.setRotate(10,0,0);
+                  tanganKanan.setRotate(10,0,0);
+                  maju = true;
+                  mundur = false;
+              }
+              genap = true;
+              ganjil = false;
+            } 
+            nextTime += 0.3;
+          }
+        if (second >= 3 && second <= 4) {
+            woopy.setTranslateMove(-0.1, 0, 0);
+          }
+          if (second >= 4 && second <= 8) {
+            woopy.setRotate(0,1,0);
+          }
+          if (second>= 8 && second <= 9) {
+            woopy.setTranslateMove(0.1,0,0);
+          }
+          if (second >= 9 && second <= 12) {
+            woopy.setRotate(2,0,0);
+          }
+          if (second >= 12 && second <= 13) {
+            woopy.setTranslateMove(0,0,0);
+          }
+          if (second >= 13 && second <= 15) {
+            woopy.setRotate(0,1,0);
+          }
+          if (second >= 15 && second <= 15) {
+            woopy.setTranslateMove(0,0,0);
+          }
         //...
         //Willy end
         
