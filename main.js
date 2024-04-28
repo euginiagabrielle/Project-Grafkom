@@ -733,7 +733,7 @@ function main() {
     };
 
     //env start
-    var env = new MyObject("env", [],[], shader_vertex_source, shader_fragment_source);
+    var envSean = new MyObject("env", [],[], shader_vertex_source, shader_fragment_source);
 
     var persegi_vertex = [
         12, -0.8, 6,    0,0,
@@ -746,7 +746,7 @@ function main() {
         0, 1, 2, 2, 1, 3
     ];
     var lantai = new objectTexture(persegi_vertex, persegi_faces, shader_vertex_sourceTex, shader_fragment_sourceTex, "ressources/floor2.jpeg");
-    env.addChild(lantai);
+    envSean.addChild(lantai);
     var persegi_vertex = [
         12, -0.81, 6,    0,0,0,
         -12,-0.81,6,     0,0,0,
@@ -767,7 +767,7 @@ function main() {
         4,5,1, 4,1,0
     ];
     var dasar = new MyObject("persegi", persegi_vertex, persegi_faces, shader_vertex_source, shader_fragment_source);
-    env.addChild(dasar);
+    envSean.addChild(dasar);
     
     var persegi_vertex = [
         -6,-0.8,-6,    0,0,
@@ -780,7 +780,7 @@ function main() {
         0, 1, 2, 0,2,3
     ];
     var tembokTengah = new objectTexture(persegi_vertex, persegi_faces, shader_vertex_sourceTex, shader_fragment_sourceTex, "ressources/stageWallMid.jpg");
-    env.addChild(tembokTengah);
+    envSean.addChild(tembokTengah);
 
     var persegi_vertex = [
         -12,-0.8,-5,    0,0,
@@ -793,7 +793,7 @@ function main() {
         0, 1, 2, 0,2,3
     ];
     var tembokKanan = new objectTexture(persegi_vertex, persegi_faces, shader_vertex_sourceTex, shader_fragment_sourceTex, "ressources/stageWall.jpg");
-    env.addChild(tembokKanan);
+    envSean.addChild(tembokKanan);
 
     var persegi_vertex = [
         12,-0.8,-5,    0,0,
@@ -806,7 +806,7 @@ function main() {
         0, 1, 2, 0,2,3
     ];
     var tembokKiri = new objectTexture(persegi_vertex, persegi_faces, shader_vertex_sourceTex, shader_fragment_sourceTex, "ressources/stageWall.jpg");
-    env.addChild(tembokKiri);
+    envSean.addChild(tembokKiri);
     //...
     //env end
 
@@ -1290,9 +1290,9 @@ function main() {
         GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 
         //env start
-        env.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
-        env.draw();
-        env.setIdentityMove();
+        envSean.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
+        envSean.draw();
+        envSean.setIdentityMove();
         //...
         //env end
         
@@ -1355,7 +1355,9 @@ function main() {
             nextTime += 0.2;
         }
 
-
+        if (sean_second >= 11) { //for looping animation
+            sean_second = sean_second % 11;
+        }
         // //Rotate at arbitrary axis...APPROVE
         // // bisa tanpa translasi, lgsg pakai entrance movement
         if (sean_second >= 3 & sean_second <= 4) {
