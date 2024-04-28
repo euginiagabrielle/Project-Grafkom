@@ -109,7 +109,8 @@ class MyObject {
         GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.OBJECT_FACES);
         GL.drawElements(GL.TRIANGLES, this.object_faces.length, GL.UNSIGNED_SHORT, 0);
         this.child.forEach(obj => {
-            if (lineSean.includes(obj) | kumisAtasSean.includes(obj) | kumisKiriSean.includes(obj) | kumisKananSean.includes(obj) | mouthVerticalSean.includes(obj)) {
+            if (lineSean.includes(obj) | kumisAtasSean.includes(obj) | kumisKiriSean.includes(obj) | kumisKananSean.includes(obj) | mouthVerticalSean.includes(obj) |
+               alis.includes(obj) | kumis_Atas.includes(obj) | kumis_Bawah.includes(obj) | arrmulut.includes(obj)) {
                 obj.drawLine();
             } else {
                 obj.draw();
@@ -124,7 +125,8 @@ class MyObject {
         GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.OBJECT_FACES);
         GL.drawElements(GL.LINE_STRIP, this.object_faces.length, GL.UNSIGNED_SHORT, 0);
         this.child.forEach(obj => {
-            if (lineSean.includes(obj) | kumisAtasSean.includes(obj) | kumisKiriSean.includes(obj) | kumisKananSean.includes(obj) | mouthVerticalSean.includes(obj)) {
+            if (lineSean.includes(obj) | kumisAtasSean.includes(obj) | kumisKiriSean.includes(obj) | kumisKananSean.includes(obj) | mouthVerticalSean.includes(obj) |
+               alis.includes(obj) | kumis_Atas.includes(obj) | kumis_Bawah.includes(obj) | arrmulut.includes(obj)) {
                 obj.drawLine();
             } else {
                 obj.draw();
