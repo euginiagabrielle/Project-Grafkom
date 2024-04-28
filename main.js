@@ -1080,7 +1080,10 @@ function main() {
             } 
             euginia_nextTime += 0.3;
           }
-          
+
+          if (euginia_second >= 15) { //for looping animation
+            euginia_second = euginia_second % 15;
+          }
           if (euginia_second >= 3 && euginia_second <= 4) {
             chilli.setTranslateMove(-0.1, 0, 0);
           }
