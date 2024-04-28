@@ -2444,7 +2444,8 @@ function main() {
         headluar.addChild(obj);
     });
 
-    woopy.setScale(0.1);
+    woopy.setScale(0.3);
+    woopy.setTranslateMove(15,0,0);
     var membesar = true;
     var nextTime = 0;
     var ganjil = false;
@@ -2527,15 +2528,16 @@ function main() {
             woopy.setRotateMove(0,0,0);
     
             // Animasi telinga membesar secara lebih halus
-            if (time - nextTime > 1000 && telinga.scale[0] < 4) {
-                if (membesar) {
-                    telinga.addScale(1.001); // Meningkatkan skala lebih halus
+            if (membesar) {
+                console.log("a");
+                woopy.addScale(0.001); // Meningkatkan skala lebih halus
+                if(woopy.scale[0]>=0.4){
                     membesar = false;
-                    nextTime = time;
-                } else {
-                    telinga.setScale(1); // Reset skala
-                    membesar = true;
                 }
+                // nextTime = time;
+            } else {
+                woopy.addScale(-0.02); // Reset skala
+                membesar = true;
             }
             //...
             //Willy end
