@@ -1,8 +1,6 @@
 var GL;
 //drawLine
 var line = [];
-var kumisAtas = [];
-var kumisKiri = [];
 var kumisKanan = [];
 var mouthVertical = [];
 var test = [];
@@ -100,7 +98,7 @@ class MyObject {
         GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.OBJECT_FACES);
         GL.drawElements(GL.TRIANGLES, this.object_faces.length, GL.UNSIGNED_SHORT, 0);
         this.child.forEach(obj => {
-            if (line.includes(obj) | kumisAtas.includes(obj) | kumisKiri.includes(obj) | kumisKanan.includes(obj) | mouthVertical.includes(obj)) {
+            if (line.includes(obj) | mouthVertical.includes(obj)) {
                 obj.drawLine();
             } else {
                 obj.draw();
@@ -115,7 +113,7 @@ class MyObject {
         GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.OBJECT_FACES);
         GL.drawElements(GL.LINE_STRIP, this.object_faces.length, GL.UNSIGNED_SHORT, 0);
         this.child.forEach(obj => {
-            if (line.includes(obj) | kumisAtas.includes(obj) | kumisKiri.includes(obj) | kumisKanan.includes(obj) | mouthVertical.includes(obj)) {
+            if (line.includes(obj) | kumisAtas.includes(obj)| mouthVertical.includes(obj)) {
                 obj.drawLine();
             } else {
                 obj.draw();
@@ -163,15 +161,11 @@ class MyObject {
     }
     addScale(s) {
         let x = this.scale[0] + s;
-        this.scale = [x, x,x];
+        let y = this.scale[1] + s;
+        let z = this.scale[2] + s;
+        this.scale = [x, y, z];
         this.child.forEach(obj => {
-            obj.addScale(s);
-        });
-    }
-    fixScale(s) {
-        this.scale = [s,s,s];
-        this.child.forEach(obj => {
-            obj.fixScale(s);
+            obj.setScale(s);
         });
     }
     setIdentityMove() {
@@ -190,132 +184,6 @@ class MyObject {
     }
 }
 
-class objectTexture {
-    CANVAS = document.getElementById("your_canvas");
-    cube_vertex = [];
-    CUBE_VERTEX;
-    cube_faces = [];
-    CUBE_FACES;
-    shader_vertex_source = null;
-    shader_fragment_source = null;
-
-    MOVEMATRIX = LIBS.get_I4();
-
-    child = [];
-
-    compile_shader = function (source, type, typeString) {
-        var shader = GL.createShader(type);
-        GL.shaderSource(shader, source);
-        GL.compileShader(shader);
-        if (!GL.getShaderParameter(shader, GL.COMPILE_STATUS)) {
-            alert("ERROR IN " + typeString + " SHADER: " + GL.getShaderInfoLog(shader));
-            return false;
-        }
-        return shader;
-    };
-
-    shader_vertex;
-    shader_fragment;
-
-    _Pmatrix;
-    _Vmatrix;
-    _Mmatrix;
-    _sampler;
-    cube_texture;
-
-
-    _color;
-    _position;
-
-    SHADER_PROGRAM = GL.createProgram();
-
-    constructor(cube_vertex, cube_faces, shader_vertex, shader_fragment, texture) {
-        this.cube_vertex = cube_vertex;
-        this.cube_faces = cube_faces;
-        this.shader_vertex_source = shader_vertex;
-        this.shader_fragment_source = shader_fragment;
-
-        this.shader_vertex = this.compile_shader(this.shader_vertex_source, GL.VERTEX_SHADER, "VERTEX");
-        this.shader_fragment = this.compile_shader(this.shader_fragment_source, GL.FRAGMENT_SHADER, "FRAGMENT");
-
-        this.SHADER_PROGRAM = GL.createProgram();
-
-        GL.attachShader(this.SHADER_PROGRAM, this.shader_vertex);
-        GL.attachShader(this.SHADER_PROGRAM, this.shader_fragment);
-
-        GL.linkProgram(this.SHADER_PROGRAM);
-
-        this._Pmatrix = GL.getUniformLocation(this.SHADER_PROGRAM, "Pmatrix");
-        this._Vmatrix = GL.getUniformLocation(this.SHADER_PROGRAM, "Vmatrix");
-        this._Mmatrix = GL.getUniformLocation(this.SHADER_PROGRAM, "Mmatrix");
-
-        this._sampler = GL.getUniformLocation(this.SHADER_PROGRAM, "sampler");
-
-        this._color = GL.getAttribLocation(this.SHADER_PROGRAM, "uv");
-        this._position = GL.getAttribLocation(this.SHADER_PROGRAM, "position");
-
-        GL.enableVertexAttribArray(this._color);
-        GL.enableVertexAttribArray(this._position);
-
-        GL.useProgram(this.SHADER_PROGRAM);
-        GL.uniform1i(this._sampler, 0);
-
-        this.CUBE_VERTEX = GL.createBuffer();
-        this.CUBE_FACES = GL.createBuffer();
-
-        GL.bindBuffer(GL.ARRAY_BUFFER, this.CUBE_VERTEX);
-        GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(this.cube_vertex), GL.STATIC_DRAW);
-
-        GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.CUBE_FACES);
-        GL.bufferData(GL.ELEMENT_ARRAY_BUFFER,
-            new Uint16Array(this.cube_faces),
-            GL.STATIC_DRAW);
-
-        this.cube_texture = LIBS.loadTexture(texture); 
-    }
-    setuniformmatrix4(PROJMATRIX, VIEWMATRIX) {
-        GL.useProgram(this.SHADER_PROGRAM);
-        GL.uniformMatrix4fv(this._Pmatrix, false, PROJMATRIX);
-        GL.uniformMatrix4fv(this._Vmatrix, false, VIEWMATRIX);
-        GL.uniformMatrix4fv(this._Mmatrix, false, this.MOVEMATRIX);
-
-    }
-    draw() {
-        GL.useProgram(this.SHADER_PROGRAM);
-        GL.activeTexture(GL.TEXTURE0);
-        GL.bindTexture(GL.TEXTURE_2D, this.cube_texture);
-
-        GL.bindBuffer(GL.ARRAY_BUFFER, this.CUBE_VERTEX);
-        GL.vertexAttribPointer(this._position, 3, GL.FLOAT, false, 4 * (3 + 2), 0);
-        GL.vertexAttribPointer(this._color, 2, GL.FLOAT, false, 4 * (3 + 2), 3 * 4);
-
-        GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.CUBE_FACES);
-        GL.drawElements(GL.TRIANGLE_STRIP, this.cube_faces.length, GL.UNSIGNED_SHORT, 0);
-        //GL.drawArrays(GL.TRIANGLES, 0, this.cube_vertex.length/6);
-        for (let i = 0; i < this.child.length; i++) {
-            this.child[i].draw();
-        }
-    }
-    getMoveMatrix() {
-        return this.MOVEMATRIX;
-    }
-    setRotateMove(phi, theta, r) {
-        LIBS.rotateZ(this.MOVEMATRIX, r);
-        LIBS.rotateY(this.MOVEMATRIX, theta);
-        LIBS.rotateX(this.MOVEMATRIX, phi);
-    }
-    setTranslateMove(x, y, z) {
-        LIBS.translateX(this.MOVEMATRIX, z);
-        LIBS.translateX(this.MOVEMATRIX, y);
-        LIBS.translateX(this.MOVEMATRIX, x);
-    }
-    setIdentityMove() {
-        LIBS.set_I4(this.MOVEMATRIX);
-    }
-    addChild(child) {
-        this.child.push(child);
-    }
-}
 
 function main() {
     var CANVAS = document.getElementById('mycanvas');
@@ -456,29 +324,6 @@ function main() {
         gl_FragColor = vec4(vColor,1.0);
     }
     `
-
-    var shader_vertex_sourceTex = "\n\
-  attribute vec3 position;\n\
-  uniform mat4 Pmatrix, Vmatrix, Mmatrix;\n\
-  attribute vec2 uv;\n\
-  varying vec2 vUV;\n\
-  \n\
-  void main(void) {\n\
-  gl_Position = Pmatrix * Vmatrix * Mmatrix * vec4(position, 1.);\n\
-  vUV=uv;\n\
-  }";
-
-    var shader_fragment_sourceTex = "\n\
-  precision mediump float;\n\
-  uniform sampler2D sampler;\n\
-  varying vec2 vUV;\n\
-  \n\
-  \n\
-  void main(void) {\n\
-  gl_FragColor = texture2D(sampler, vUV);\n\
-  //gl_FragColor = vec4(1.,1.,1.,1.);\n\
-  }";
-
     function addXYZ(vertex, newX, newY, newZ) {
         console.log(vertex);
         for (let index = 0; index < vertex.length; index += 6) {
@@ -732,453 +577,298 @@ function main() {
         return [vertex, faces];
     };
 
-    //env start
-    var envSean = new MyObject("env", [],[], shader_vertex_source, shader_fragment_source);
+    var woopy = new MyObject("woopy", [], [], shader_vertex_source, shader_fragment_source);
 
-    var persegi_vertex = [
-        12, -0.8, 6,    0,0,
-        -12,-0.8,6,     1,0,
-        12,-0.8,-6,     0,1,
-        -12,-0.8,-6,    1,1,
-      ];
+    var calculate = createElips(1.0, 36, 18, 1.8, 1.2, 1.0, 0, 0, 0,  0, 0, 128);
+    var elipsHead_vertex = calculate[0];
+    var elipsHead_faces = calculate[1];
+    var headluar = new MyObject("head", elipsHead_vertex, elipsHead_faces, shader_vertex_source, shader_fragment_source);
+    woopy.addChild(headluar);
+    test.push(headluar);
 
-    persegi_faces = [
-        0, 1, 2, 2, 1, 3
-    ];
-    var lantai = new objectTexture(persegi_vertex, persegi_faces, shader_vertex_sourceTex, shader_fragment_sourceTex, "ressources/floor2.jpeg");
-    envSean.addChild(lantai);
-    var persegi_vertex = [
-        12, -0.81, 6,    0,0,0,
-        -12,-0.81,6,     0,0,0,
-        12,-0.81,-6,     0,0,0,
-        -12,-0.81,-6,    0,0,0,
+    calculate = createElips(1.15, 36, 18, 1.0, 0.8, 1.0, 0, 0, 0, 255, 255 , 255);
+    var elipsFace_vertex = calculate[0];
+    var elipsFace_faces = calculate[1];
+    var faceDalam = new MyObject("face", elipsFace_vertex, elipsFace_faces, shader_vertex_source, shader_fragment_source);
+    faceDalam.translate = [0, -0.1, 0.5];
+    headluar.addChild(faceDalam);
+    test.push(faceDalam);
 
-        12, -1.5, 6,    0,0,0,
-        -12,-1.5,6,     0,0,0,
-        12,-1.5,-6,     0,0,0,
-        -12,-1.5,-6,    0,0,0
-      ];
-      persegi_faces = [
-        0, 1, 2, 2, 1, 3,
-        4,5,6, 6,5,7,
-        7,6,2, 7,2,3,
-        5,6,2, 5,2,1,
-        4,7,3, 4,3,0,
-        4,5,1, 4,1,0
-    ];
-    var dasar = new MyObject("persegi", persegi_vertex, persegi_faces, shader_vertex_source, shader_fragment_source);
-    envSean.addChild(dasar);
     
-    var persegi_vertex = [
-        -6,-0.8,-6,    0,0,
-        6,-0.8,-6,     1,0,
-        6,5,-6,     1,1,
-        -6,5,-6,    0,1,
-      ];
+    calculate = createElipPara(0.5, 36, 18, 0.55, 0.55, 1.5, 0, 0, 0, 255,0,0);
+    var ekor_vertex = calculate[0];
+    var ekor_faces = calculate[1];
+    var ekor = new MyObject("ekor", ekor_vertex, ekor_faces, shader_vertex_source, shader_fragment_source);
+    //rotate y +10, trans y +0.4
+    //rotate y -10, trans y -0.4
+    ekor.translate = [0, 0, 1];
+    ekor.rotate = [150, 0, 0];
+    headluar.addChild(ekor);
+    test.push(ekor);
 
-    persegi_faces = [
-        0, 1, 2, 0,2,3
-    ];
-    var tembokTengah = new objectTexture(persegi_vertex, persegi_faces, shader_vertex_sourceTex, shader_fragment_sourceTex, "ressources/stageWallMid.jpg");
-    envSean.addChild(tembokTengah);
+    var telinga = new MyObject("telinga", [], [], shader_vertex_source, shader_fragment_source);
+    faceDalam.addChild(telinga);
 
-    var persegi_vertex = [
-        -12,-0.8,-5,    0,0,
-        -6,-0.8,-5,     1,0,
-        -6,5,-5,     1,1,
-        -12,5,-5,    0,1,
-      ];
+    calculate = createElipPara(0.5, 36, 18, 0.55, 0.55, 1.5, 0, 0, 0,  255, 0, 0 );
+    var telingaKanan_vertex = calculate[0];
+    var telingaKanan_faces = calculate[1];
+    var telingaKanan = new MyObject("telingaKanan", telingaKanan_vertex, telingaKanan_faces, shader_vertex_source, shader_fragment_source);
+    //rotate y +10, trans y +0.4
+    //rotate y -10, trans y -0.4
+    telingaKanan.translate = [-0.75, 0, 1];
+    telingaKanan.rotate = [270, 0, 0];
+    headluar.addChild(telingaKanan);
+    test.push(telingaKanan);
 
-    persegi_faces = [
-        0, 1, 2, 0,2,3
-    ];
-    var tembokKanan = new objectTexture(persegi_vertex, persegi_faces, shader_vertex_sourceTex, shader_fragment_sourceTex, "ressources/stageWall.jpg");
-    envSean.addChild(tembokKanan);
+    calculate = createElipPara(0.5, 36, 18, 0.55, 0.55, 1.5, 0, 0, 0, 255, 0, 0);
+    var telingaKiri_vertex = calculate[0];
+    var telingaKiri_faces = calculate[1];
+    var telingaKiri = new MyObject("telingaKiri", telingaKiri_vertex, telingaKiri_faces, shader_vertex_source, shader_fragment_source);
+    telingaKiri.translate = [0.75, 0, 1];
+    //rotate y +10, trans y +0.4
+    //rotate y -10, trans y -0.4
+    telingaKiri.rotate = [270, 0, 0];
+    headluar.addChild(telingaKiri);
+    test.push(telingaKiri);
 
-    var persegi_vertex = [
-        12,-0.8,-5,    0,0,
-        6,-0.8,-5,     1,0,
-        6,5,-5,     1,1,
-        12,5,-5,    0,1,
-      ];
+    var lenganKiri_vertex = [];
+    var lenganKiri_faces = [];
+    var calculate = createTabung(0.2, 0, 0, 0, 0.8,0,0,1, lenganKiri_vertex, lenganKiri_faces);
+    lenganKiri_vertex = calculate[0];
+    lenganKiri_faces = calculate[1];
+    var lenganKiri = new MyObject("lenganKiri", lenganKiri_vertex, lenganKiri_faces, shader_vertex_source, shader_fragment_source);
+    lenganKiri.translate = [1.5, 0, -0.7];
+    lenganKiri.rotate = [180, 0,0];
+    //tangan maju mundur aman
+    // lenganKiri.rotate[0] += 10;
+    //putar samping
+    //menjauh, rY + 10,  
+    // lenganKiri.rotate[2]+=30;
+    // lenganKiri.translate[0]+= -2;
+    // lenganKiri.translate[2] += 1;
+    headluar.addChild(lenganKiri);
+    test.push(lenganKiri);
 
-    persegi_faces = [
-        0, 1, 2, 0,2,3
-    ];
-    var tembokKiri = new objectTexture(persegi_vertex, persegi_faces, shader_vertex_sourceTex, shader_fragment_sourceTex, "ressources/stageWall.jpg");
-    envSean.addChild(tembokKiri);
+    var lenganKanan_vertex = [];
+    var lenganKanan_faces = [];
+    var calculate = createTabung(0.2, 0, 0, 0, 0.8,0,0,1, lenganKanan_vertex, lenganKanan_faces);
+    lenganKanan_vertex = calculate[0];
+    lenganKanan_faces = calculate[1];
+    var lenganKanan = new MyObject("lenganKanan", lenganKanan_vertex, lenganKanan_faces, shader_vertex_source, shader_fragment_source);
+    lenganKanan.translate = [-1.5, 0,-0.7];
+    lenganKanan.rotate = [180, 0, 0];
+    headluar.addChild(lenganKanan);
+    test.push(lenganKanan);
 
-    // KAKTUS //
-    var kaktus = new MyObject("kaktus", [], [], shader_vertex_source, shader_fragment_source);
-    var create_env = createElips(1, 36, 18, 0.3, 1, 0.3, 10, 0.5, -4, 0.2, 0.3, 0.1);
-    var kaktus1_vertex = create_env[0];
-    var kaktus1_faces = create_env[1];
-    var kaktus1 = new MyObject("kaktus1", kaktus1_vertex, kaktus1_faces, shader_vertex_source, shader_fragment_source);
-    kaktus.addChild(kaktus1);
+    calculate = createElipPara(0.2, 36, 18, 1, 1, 2, 0, 0, 0,  255, 255, 255);
+    var tanganKiri_vertex = calculate[0];
+    var tanganKiri_faces = calculate[1];
+    var tanganKiri = new MyObject("tanganKiri", tanganKiri_vertex, tanganKiri_faces, shader_vertex_source, shader_fragment_source);
+    tanganKiri.translate = [1.5, 0, 0.7];
+    tanganKiri.rotate = [360, 0, 0];
+    woopy.addChild(tanganKiri);
+    test.push(tanganKiri);
 
-    create_env = createElips(1, 36, 18, 0.3, 1, 0.3, 8, 0.5, -4, 0.2, 0.3, 0.1);
-    var kaktus2_vertex = create_env[0];
-    var kaktus2_faces = create_env[1];
-    var kaktus2 = new MyObject("kaktus2", kaktus2_vertex, kaktus2_faces, shader_vertex_source, shader_fragment_source);
-    kaktus.addChild(kaktus2);
+    calculate = createElipPara(0.2, 36, 18, 1, 1, 2, 0, 0, 0, 255, 255, 255);
+    var tanganKanan_vertex = calculate[0];
+    var tanganKanan_faces = calculate[1];
+    var tanganKanan = new MyObject("tanganKanan", tanganKanan_vertex, tanganKanan_faces, shader_vertex_source, shader_fragment_source);
+    tanganKanan.translate = [-1.5, 0,0.7];
+    tanganKanan.rotate = [360, 0, 0];
+    woopy.addChild(tanganKanan);
+    test.push(tanganKanan);
 
-    create_env = createElips(1, 36, 18, 0.3, 1, 0.3, -10, 0.5, -4, 0.2, 0.3, 0.1);
-    var kaktus3_vertex = create_env[0];
-    var kaktus3_faces = create_env[1];
-    var kaktus3 = new MyObject("kaktus3", kaktus3_vertex, kaktus3_faces, shader_vertex_source, shader_fragment_source);
-    kaktus.addChild(kaktus3);
+    var pahaKanan_vertex = [];
+    var pahaKanan_faces = [];
+    var calculate = createTabung(0.2, 0, 0, 0, 0.8, 0, 0, 1,lenganKanan_vertex, lenganKanan_faces);
+    pahaKanan_vertex = calculate[0];
+    pahaKanan_faces = calculate[1];
+    var pahaKanan = new MyObject("pahaKanan", pahaKanan_vertex, pahaKanan_faces, shader_vertex_source, shader_fragment_source);
+    pahaKanan.translate = [-0.5, 0,0.5];
+    pahaKanan.rotate = [90, 0, 0];
+    headluar.addChild(pahaKanan);
+    test.push(pahaKanan);
+    
+    calculate = createElipPara(0.2, 36, 18, 1, 1, 2, 0, 0, 0, 255, 255, 255);
+    var kakiKanan_vertex = calculate[0];
+    var kakiKanan_faces = calculate[1];
+    var kakiKanan = new MyObject("kakiKanan", kakiKanan_vertex, kakiKanan_faces, shader_vertex_source, shader_fragment_source);
+    kakiKanan.translate = [-0.5, 0,1.2];
+    kakiKanan.rotate = [90, 0, 0];
+    woopy.addChild(kakiKanan);
+    test.push(kakiKanan);
 
-    create_env = createElips(1, 36, 18, 0.3, 1, 0.3, -8, 0.5, -4, 0.2, 0.3, 0.1);
-    var kaktus4_vertex = create_env[0];
-    var kaktus4_faces = create_env[1];
-    var kaktus4 = new MyObject("kaktus4", kaktus4_vertex, kaktus4_faces, shader_vertex_source, shader_fragment_source);
-    kaktus.addChild(kaktus4);
+    var pahaKiri_vertex = [];
+    var pahaKiri_faces = [];
+    var calculate = createTabung(0.2, 0, 0, 0, 0.8, 0,0,1, lenganKanan_vertex, lenganKanan_faces);
+    pahaKiri_vertex = calculate[0];
+    pahaKiri_faces = calculate[1];
+    var pahaKiri = new MyObject("pahaKiri", pahaKiri_vertex, pahaKiri_faces, shader_vertex_source, shader_fragment_source);
+    pahaKiri.translate = [0.2, 0,0.5];
+    pahaKiri.rotate = [90, 0, 0];
+    headluar.addChild(pahaKiri);
+    test.push(pahaKiri);
+    
+    calculate = createElipPara(0.2, 36, 18, 1, 1, 2, 0, 0, 0, 255, 255, 255);
+    var kakiKiri_vertex = calculate[0];
+    var kakiKiri_faces = calculate[1];
+    var kakiKiri = new MyObject("kakiKiri", kakiKiri_vertex, kakiKiri_faces, shader_vertex_source, shader_fragment_source);
+    kakiKiri.translate = [0.2, 0,1.2];
+    kakiKiri.rotate = [90, 0, 0];
+    woopy.addChild(kakiKiri);
+    test.push(kakiKiri);
 
-    var create_env = createElips(1, 36, 18, 0.3, 1, 0.3, 10, 0.5, 5, 0.2, 0.3, 0.1);
-    var kaktus5_vertex = create_env[0];
-    var kaktus5_faces = create_env[1];
-    var kaktus5 = new MyObject("kaktus5", kaktus5_vertex, kaktus5_faces, shader_vertex_source, shader_fragment_source);
-    kaktus.addChild(kaktus5);
 
-    create_env = createElips(1, 36, 18, 0.3, 1, 0.3, -10, 0.5, 5, 0.2, 0.3, 0.1);
-    var kaktus6_vertex = create_env[0];
-    var kaktus6_faces = create_env[1];
-    var kaktus6 = new MyObject("kaktus6", kaktus6_vertex, kaktus6_faces, shader_vertex_source, shader_fragment_source);
-    kaktus.addChild(kaktus6);
 
-    create_env = createElips(1, 36, 18, 0.3, 1, 0.3, -0.65, -0.3, 6.55, 0.2, 0.3, 0.1);
-    var kaktus7_vertex = create_env[0];
-    var kaktus7_faces = create_env[1];
-    var kaktus7 = new MyObject("kaktus7", kaktus7_vertex, kaktus7_faces, shader_vertex_source, shader_fragment_source);
-    kaktus.addChild(kaktus7);
 
-    create_env = createElips(1, 36, 18, 0.3, 1, 0.3, 0.65, -0.3, 6.55, 0.2, 0.3, 0.1);
-    var kaktus8_vertex = create_env[0];
-    var kaktus8_faces = create_env[1];
-    var kaktus8 = new MyObject("kaktus8", kaktus8_vertex, kaktus8_faces, shader_vertex_source, shader_fragment_source);
-    kaktus.addChild(kaktus8);
+    var calculate = createElips(0.37, 36, 18, 1, 1, 1, 0, 0, 0, 255,  255, 0);
+    var ronaKiri_vertex = calculate[0];
+    var ronaKiri_faces = calculate[1];
+    var ronaKiri = new MyObject("ronaKiri", ronaKiri_vertex, ronaKiri_faces, shader_vertex_source, shader_fragment_source);
+    ronaKiri.translate = [0.6, -0.4, 1.1];
+    headluar.addChild(ronaKiri);
+    test.push(ronaKiri);
 
-    create_env = createElips(1, 36, 18, 0.3, 1, 0.3, 2, -0.3, 6.55, 0.2, 0.3, 0.1);
-    var kaktus9_vertex = create_env[0];
-    var kaktus9_faces = create_env[1];
-    var kaktus9 = new MyObject("kaktus9", kaktus9_vertex, kaktus9_faces, shader_vertex_source, shader_fragment_source);
-    kaktus.addChild(kaktus9);
+    var calculate = createElips(0.37, 36, 18, 1, 1, 1, 0, 0, 0, 255,  255, 0);
+    var ronaKanan_vertex = calculate[0];
+    var ronaKanan_faces = calculate[1];
+    var ronaKanan = new MyObject("ronaKanan", ronaKanan_vertex, ronaKanan_faces, shader_vertex_source, shader_fragment_source);
+    ronaKanan.translate = [-0.6, -0.4, 1.1];
+    headluar.addChild(ronaKanan);
+    test.push(ronaKanan);
 
-    create_env = createElips(1, 36, 18, 0.3, 1, 0.3, -2, -0.3, 6.55, 0.2, 0.3, 0.1);
-    var kaktus10_vertex = create_env[0];
-    var kaktus10_faces = create_env[1];
-    var kaktus10 = new MyObject("kaktus10", kaktus10_vertex, kaktus10_faces, shader_vertex_source, shader_fragment_source);
-    kaktus.addChild(kaktus10);
-
-    // SPOTLIGHT //
-    var spotlight1 = new MyObject("spotlight1", [], [], shader_vertex_source, shader_fragment_source);
-    var stand1_vertex = [ 
-        4, -0.8, 6,     0.1, 0.1, 0.1,
-        5, -0.8, 6,     0.1, 0.1, 0.1,
-        5, -0.5, 6,     0.1, 0.1, 0.1,
-        4, -0.5, 6,     0.1, 0.1, 0.1,
- 
-        5, -0.8, 5,     0.1, 0.1, 0.1,
-        4, -0.8, 5,     0.1, 0.1, 0.1,
-        5, -0.5, 5,     0.1, 0.1, 0.1,
-        4, -0.5, 5,     0.1, 0.1, 0.1,
- 
-        4, -0.8, 6,     0.1, 0.1, 0.1,
-        4, -0.5, 6,     0.1, 0.1, 0.1,
-        4, -0.5, 5,     0.1, 0.1, 0.1,
-        4, -0.8, 5,     0.1, 0.1, 0.1,
- 
-        5, -0.8, 6,     0.1, 0.1, 0.1,
-        5, -0.5, 6,     0.1, 0.1, 0.1,
-        5, -0.5, 5,     0.1, 0.1, 0.1,
-        5, -0.8, 5,     0.1, 0.1, 0.1,
- 
-        4, -0.8, 6,     0.1, 0.1, 0.1,
-        4, -0.8, 5,     0.1, 0.1, 0.1,
-        5, -0.8, 5,     0.1, 0.1, 0.1,
-        5, -0.8, 6,     0.1, 0.1, 0.1,
- 
-        4, -0.5, 6,     0.2, 0.2, 0.2,
-        4, -0.5, 5,     0.2, 0.2, 0.2,
-        5, -0.5, 5,     0.2, 0.2, 0.2,
-        5, -0.5, 6,     0.2, 0.2, 0.2
-    ];
-    var stand1_faces = [
-        0, 1, 2,
-        0, 2, 3,
-   
-        4, 5, 6,
-        4, 6, 7,
-   
-        8, 9, 10,
-        8, 10, 11,
-   
-        12, 13, 14,
-        12, 14, 15,
-   
-        16, 17, 18,
-        16, 18, 19,
-   
-        20, 21, 22,
-        20, 22, 23
-    ];
-    var stand1 = new MyObject("stand1", stand1_vertex, stand1_faces, shader_vertex_source, shader_fragment_source);
-    spotlight1.addChild(stand1);
-
-    var light1_vertex = [];
-    var light1_faces = []
-    create_env = createTabung(0.5, 0, 0, 0, 1, 0, 0, 0, light1_vertex, light1_faces);
-    light1_vertex = create_env[0];
-    light1_faces = create_env[1];
-    var light1 = new MyObject("light1", light1_vertex, light1_faces, shader_vertex_source, shader_fragment_source);
-    light1.translate = [4.5,0,5];
-    spotlight1.addChild(light1);
-
-    var circle1_vertex = [];
-    circle1_vertex.push(0.5,0,1.46);
-    circle1_vertex.push(1,1,1);
-    for (let i = 0; i <= 360; i++) {
-        circle1_vertex.push(0.5 * Math.cos(i/Math.PI));
-        circle1_vertex.push(0.5 * Math.sin(i/Math.PI));
-        circle1_vertex.push(1.46);
-        circle1_vertex.push(1);
-        circle1_vertex.push(1);
-        circle1_vertex.push(0);
+  
+    var eyes = [];
+    var eyeLeft_vertex = [];
+    var eyeLeft_faces = [];
+    r = 0.1;
+    for (let index = 0; index <= 360; index++) {
+        var x = r * Math.cos(LIBS.degToRad(index));
+        var y = r * Math.sin(LIBS.degToRad(index));
+        eyeLeft_vertex.push(x - 0.33);
+        eyeLeft_vertex.push(y);
+        eyeLeft_vertex.push(1.65);
+        eyeLeft_vertex.push(0, 0, 0);
     }
-    var circle1_faces = [];
-    for (let i = 0; i < 360; i++) {
-        circle1_faces.push(0,i,i+1);
+    for (let index = 0; index <= 360; index++) {
+        eyeLeft_faces.push(0, index, index + 1);
     }
-    var light2 = new MyObject("light2", circle1_vertex, circle1_faces, shader_vertex_source, shader_fragment_source);
-    light2.translate = [4.5,0,3.5];
-    spotlight1.addChild(light2);
-
-    var spotlight2 = new MyObject("spotlight2", [], [], shader_vertex_source, shader_fragment_source);
-    var stand2_vertex = [ 
-        -4, -0.8, 6,     0.1, 0.1, 0.1,
-        -5, -0.8, 6,     0.1, 0.1, 0.1,
-        -5, -0.5, 6,     0.1, 0.1, 0.1,
-        -4, -0.5, 6,     0.1, 0.1, 0.1,
- 
-        -5, -0.8, 5,     0.1, 0.1, 0.1,
-        -4, -0.8, 5,     0.1, 0.1, 0.1,
-        -5, -0.5, 5,     0.1, 0.1, 0.1,
-        -4, -0.5, 5,     0.1, 0.1, 0.1,
- 
-        -4, -0.8, 6,     0.1, 0.1, 0.1,
-        -4, -0.5, 6,     0.1, 0.1, 0.1,
-        -4, -0.5, 5,     0.1, 0.1, 0.1,
-        -4, -0.8, 5,     0.1, 0.1, 0.1,
- 
-        -5, -0.8, 6,     0.1, 0.1, 0.1,
-        -5, -0.5, 6,     0.1, 0.1, 0.1,
-        -5, -0.5, 5,     0.1, 0.1, 0.1,
-        -5, -0.8, 5,     0.1, 0.1, 0.1,
- 
-        -4, -0.8, 6,     0.1, 0.1, 0.1,
-        -4, -0.8, 5,     0.1, 0.1, 0.1,
-        -5, -0.8, 5,     0.1, 0.1, 0.1,
-        -5, -0.8, 6,     0.1, 0.1, 0.1,
- 
-        -4, -0.5, 6,     0.2, 0.2, 0.2,
-        -4, -0.5, 5,     0.2, 0.2, 0.2,
-        -5, -0.5, 5,     0.2, 0.2, 0.2,
-        -5, -0.5, 6,     0.2, 0.2, 0.2
-    ];
-    var stand2_faces = [
-        0, 1, 2,
-        0, 2, 3,
-   
-        4, 5, 6,
-        4, 6, 7,
-   
-        8, 9, 10,
-        8, 10, 11,
-   
-        12, 13, 14,
-        12, 14, 15,
-   
-        16, 17, 18,
-        16, 18, 19,
-   
-        20, 21, 22,
-        20, 22, 23
-    ];
-    var stand2 = new MyObject("stand2", stand2_vertex, stand2_faces, shader_vertex_source, shader_fragment_source);
-    spotlight2.addChild(stand2);
-
-    var light3_vertex = [];
-    var light3_faces = []
-    create_env = createTabung(0.5, 0, 0, 0, 1, 0, 0, 0, light3_vertex, light3_faces);
-    light3_vertex = create_env[0];
-    light3_faces = create_env[1];
-    var light3 = new MyObject("light3", light3_vertex, light3_faces, shader_vertex_source, shader_fragment_source);
-    light3.translate = [-4.5,0,5];
-    spotlight2.addChild(light3);
-
-    var circle2_vertex = [];
-    circle2_vertex.push(-0.5,0,1.46);
-    circle2_vertex.push(1,1,1);
-    for (let i = 0; i <= 360; i++) {
-        circle2_vertex.push(-0.5 * Math.cos(i/Math.PI));
-        circle2_vertex.push(0.5 * Math.sin(i/Math.PI));
-        circle2_vertex.push(1.46);
-        circle2_vertex.push(1);
-        circle2_vertex.push(1);
-        circle2_vertex.push(0);
+    var eye = new MyObject("mataKanan", eyeLeft_vertex, eyeLeft_faces, shader_vertex_source, shader_fragment_source);
+    eyes.push(eye);
+    var eyeRight_vertex = [];
+    var eyeRight_faces = [];
+    r = 0.1;
+    for (let index = 0; index <= 360; index++) {
+        var x = r * Math.cos(LIBS.degToRad(index));
+        var y = r * Math.sin(LIBS.degToRad(index));
+        eyeRight_vertex.push(x + 0.33);
+        eyeRight_vertex.push(y);
+        eyeRight_vertex.push(1.65);
+        eyeRight_vertex.push(0, 0, 0);
     }
-    var circle2_faces = [];
-    for (let i = 0; i < 360; i++) {
-        circle2_faces.push(0,i,i+1);
+    for (let index = 0; index <= 360; index++) {
+        eyeRight_faces.push(0, index, index + 1);
     }
-    var light4 = new MyObject("light4", circle2_vertex, circle2_faces, shader_vertex_source, shader_fragment_source);
-    light4.translate = [-4.5,0,3.5];
-    spotlight2.addChild(light4);
+    eye = new MyObject("mataKiri", eyeRight_vertex, eyeRight_faces, shader_vertex_source, shader_fragment_source);
+    eyes.push(eye);
 
-        // MIC 1 //
-    var mic1 = new MyObject("mic1", [], [], shader_vertex_source, shader_fragment_source);
-    var stand1_mic1_vertex = [];
-    var stand1_mic1_faces = [];
-    create_env = createTabung(0.1, 0, 0, 0, 1.5, 0, 0, 0, stand1_mic1_vertex, stand1_mic1_faces);
-    stand1_mic1_vertex = create_env[0];
-    stand1_mic1_faces = create_env[1];
-    var stand1_mic1 = new MyObject("stand1_mic1", stand1_mic1_vertex, stand1_mic1_faces, shader_vertex_source, shader_fragment_source);
-    stand1_mic1.translate = [5,0.1,2];
-    stand1_mic1.rotate = [15,0,0];
-    mic1.addChild(stand1_mic1);
+    var eyeMid_vertex = [];
+    var eyeMid_faces = [];
+    r = 0.1;
+    for (let index = 0; index <= 360; index++) {
+        var x = r * Math.cos(LIBS.degToRad(index));
+        var y = r * Math.sin(LIBS.degToRad(index));
+        eyeMid_vertex.push(x + 0);
+        eyeMid_vertex.push(y - 1.2);
+        eyeMid_vertex.push(0.53);
+        eyeMid_vertex.push(0, 0, 0);
+    }
+    for (let index = 0; index <= 360; index++) {
+        eyeMid_faces.push(0, index, index + 1);
+    }
 
-    var stand2_mic1_vertex = [];
-    var stand2_mic1_faces = [];
-    create_env = createTabung(0.1, 0, 0, 0, 1.5, 0, 0, 0, stand2_mic1_vertex, stand2_mic1_faces);
-    stand2_mic1_vertex = create_env[0];
-    stand2_mic1_faces = create_env[1];
-    var stand2_mic1 = new MyObject("stand2_mic1", stand2_mic1_vertex, stand2_mic1_faces, shader_vertex_source, shader_fragment_source);
-    stand2_mic1.translate = [-2,0.9,5];
-    stand2_mic1.rotate = [15,90,0];
-    mic1.addChild(stand2_mic1);
 
-    var stand3_mic1_vertex = [];
-    var stand3_mic1_faces = [];
-    create_env = createTabung(0.1, 0, 0, 0, 1.5, 0, 0, 0, stand3_mic1_vertex, stand3_mic1_faces);
-    stand3_mic1_vertex = create_env[0];
-    stand3_mic1_faces = create_env[1];
-    var stand3_mic1 = new MyObject("stand3_mic1", stand3_mic1_vertex, stand3_mic1_faces, shader_vertex_source, shader_fragment_source);
-    stand3_mic1.translate = [2,-1.8,-4.9];
-    stand3_mic1.rotate = [15,-90,0];
-    mic1.addChild(stand3_mic1);
-
-    var stand4_mic1_vertex = [];
-    var stand4_mic1_faces = [];
-    create_env = createTabung(0.1, 0, 0, 0, 1.5, 0, 0, 0, stand4_mic1_vertex, stand4_mic1_faces);
-    stand4_mic1_vertex = create_env[0];
-    stand4_mic1_faces = create_env[1];
-    var stand4_mic1 = new MyObject("stand4_mic1", stand4_mic1_vertex, stand4_mic1_faces, shader_vertex_source, shader_fragment_source);
-    stand4_mic1.translate = [5,2,-1];
-    stand4_mic1.rotate = [90,0,0];
-    mic1.addChild(stand4_mic1);
-
-    var stand5_mic1_vertex = [];
-    var stand5_mic1_faces = [];
-    create_env = createTabung(0.1, 0, 0, 0, 2, 0, 0, 0, stand5_mic1_vertex, stand5_mic1_faces);
-    stand5_mic1_vertex = create_env[0];
-    stand5_mic1_faces = create_env[1];
-    var stand5_mic1 = new MyObject("stand5_mic1", stand5_mic1_vertex, stand5_mic1_faces, shader_vertex_source, shader_fragment_source);
-    stand5_mic1.translate = [5,1.5,0.2];
-    stand5_mic1.rotate = [15,0,0];
-    mic1.addChild(stand5_mic1);
-
-    var circle_mic1_vertex = [];
-    var circle_mic1_faces = [];
-    create_env = createElips(0.2, 36, 18, 1, 1, 1, 0, 0, 0, 0.3, 0.3, 0.3);
-    circle_mic1_vertex = create_env[0];
-    circle_mic1_faces = create_env[1];
-    var circle_mic1 = new MyObject("circle_mic1", circle_mic1_vertex, circle_mic1_faces, shader_vertex_source, shader_fragment_source);
-    circle_mic1.translate = [5,1.45,0.5];
-    mic1.addChild(circle_mic1);
-
-    // MIC 2 //
-    var mic2 = new MyObject("mic2", [], [], shader_vertex_source, shader_fragment_source);
-    var stand1_mic2_vertex = [];
-    var stand1_mic2_faces = [];
-    create_env = createTabung(0.1, 0, 0, 0, 1.5, 0, 0, 0, stand1_mic2_vertex, stand1_mic2_faces);
-    stand1_mic2_vertex = create_env[0];
-    stand1_mic2_faces = create_env[1];
-    var stand1_mic2 = new MyObject("stand1_mic2", stand1_mic2_vertex, stand1_mic2_faces, shader_vertex_source, shader_fragment_source);
-    stand1_mic2.translate = [-5,0.1,2];
-    stand1_mic2.rotate = [15,0,0];
-    mic2.addChild(stand1_mic2);
-
-    var stand2_mic2_vertex = [];
-    var stand2_mic2_faces = [];
-    create_env = createTabung(0.1, 0, 0, 0, -1.5, 0, 0, 0, stand2_mic2_vertex, stand2_mic2_faces);
-    stand2_mic2_vertex = create_env[0];
-    stand2_mic2_faces = create_env[1];
-    var stand2_mic2 = new MyObject("stand2_mic2", stand2_mic2_vertex, stand2_mic2_faces, shader_vertex_source, shader_fragment_source);
-    stand2_mic2.translate = [-2,-1.6,-3.3];
-    stand2_mic2.rotate = [15,90,0];
-    mic1.addChild(stand2_mic2);
-
-    var stand3_mic2_vertex = [];
-    var stand3_mic2_faces = [];
-    create_env = createTabung(0.1, 0, 0, 0, -1.5, 0, 0, 0, stand3_mic2_vertex, stand3_mic2_faces);
-    stand3_mic2_vertex = create_env[0];
-    stand3_mic2_faces = create_env[1];
-    var stand3_mic2 = new MyObject("stand3_mic2", stand3_mic2_vertex, stand3_mic2_faces, shader_vertex_source, shader_fragment_source);
-    stand3_mic2.translate = [2,1,6.5];
-    stand3_mic2.rotate = [15,-90,0];
-    mic2.addChild(stand3_mic2);
-
-    var stand4_mic2_vertex = [];
-    var stand4_mic2_faces = [];
-    create_env = createTabung(0.1, 0, 0, 0, 1.5, 0, 0, 0, stand4_mic2_vertex, stand4_mic2_faces);
-    stand4_mic2_vertex = create_env[0];
-    stand4_mic2_faces = create_env[1];
-    var stand4_mic2 = new MyObject("stand4_mic2", stand4_mic2_vertex, stand4_mic2_faces, shader_vertex_source, shader_fragment_source);
-    stand4_mic2.translate = [-5,2,-1];
-    stand4_mic2.rotate = [90,0,0];
-    mic2.addChild(stand4_mic2);
-
-    var stand5_mic2_vertex = [];
-    var stand5_mic2_faces = [];
-    create_env = createTabung(0.1, 0, 0, 0, 2, 0, 0, 0, stand5_mic2_vertex, stand5_mic2_faces);
-    stand5_mic2_vertex = create_env[0];
-    stand5_mic2_faces = create_env[1];
-    var stand5_mic2 = new MyObject("stand5_mic2", stand5_mic2_vertex, stand5_mic2_faces, shader_vertex_source, shader_fragment_source);
-    stand5_mic2.translate = [-5,1.5,0.2];
-    stand5_mic2.rotate = [15,0,0];
-    mic2.addChild(stand5_mic2);
-
-    var circle_mic2_vertex = [];
-    var circle_mic2_faces = [];
-    create_env = createElips(0.2, 36, 18, 1, 1, 1, 0, 0, 0, 0.3, 0.3, 0.3);
-    circle_mic2_vertex = create_env[0];
-    circle_mic2_faces = create_env[1];
-    var circle_mic2 = new MyObject("circle_mic2", circle_mic2_vertex, circle_mic2_faces, shader_vertex_source, shader_fragment_source);
-    circle_mic2.translate = [-5,1.45,0.5];
-    mic2.addChild(circle_mic2);
-
-    //...
-    //env end
-
-    //Sean start
+    var curve = [0.0, 0.0, 0.2, -0.1, 0.2, 0];
+    yStart = -0.4;
+    for (let index = 0; index < 4; index++) {
+        var line_vertex = bezier.generateBSpline(curve, 100, 2, -0.1, yStart, 1.58);
+        var line_faces = [];
+        for (let index = 0; index < line_vertex.length / 6; index++) {
+            line_faces.push(index);
+        }
+        var mouth1 = new MyObject("mulutCurve", line_vertex, line_faces, shader_vertex_source, shader_fragment_source);
+        yStart += 0.005;
+        line.push(mouth1);
+    }
     
-    //...
-    //Sean end
+    var curve = [0.0, 0.0, 0.2, -0.1, 0.2, 0];
+    yStart = -0.4;
+    for (let index = 0; index < 4; index++) {
+        var line_vertex = bezier.generateBSpline(curve, 100, 2, 0.1, yStart, 1.58);
+        var line_faces = [];
+        for (let index = 0; index < line_vertex.length / 6; index++) {
+            line_faces.push(index);
+        }
+        var mouth2 = new MyObject("mulutCurve", line_vertex, line_faces, shader_vertex_source, shader_fragment_source);
+        yStart += 0.005;
+        line.push(mouth2);
+    }
 
-    //Euginia start
-    
-    //...
-    //Euginia end
+    curve = [0.0, 0.0, 0.1, 0.1, 0.2, 0];
+    yStart = 0.2;
+    for (let index = 0; index < 4; index++) {
+        var line_vertex = bezier.generateBSpline(curve, 100, 2, -0.45, yStart, 1.58);
+        var line_faces = [];
+        for (let index = 0; index < line_vertex.length / 6; index++) {
+            line_faces.push(index);
+        }
+        var alisKanan = new MyObject("alisKanan", line_vertex, line_faces, shader_vertex_source, shader_fragment_source);
+        yStart += 0.005;
+        line.push(alisKanan);
+    }
+    curve = [0.0, 0.0, 0.1, 0.1, 0.2, 0];
+    yStart = 0.2;
+    for (let index = 0; index < 4; index++) {
+        var line_vertex = bezier.generateBSpline(curve, 100, 2, 0.25, yStart, 1.58);
+        var line_faces = [];
+        for (let index = 0; index < line_vertex.length / 6; index++) {
+            line_faces.push(index);
+        }
+        var alisKiri = new MyObject("alisKiri", line_vertex, line_faces, shader_vertex_source, shader_fragment_source);
+        yStart += 0.005;
+        line.push(alisKiri);
+    }
 
-    //Willy start
+
     
-    //...
-    //Willy end
-    
+
+   
+   
+
+    line.forEach(obj => {
+        headluar.addChild(obj);
+        test.push(obj);
+    });
+
+    mouthVertical.forEach(obj => {
+        headluar.addChild(obj);
+        test.push(obj);
+    });
+
+
+    eyes.forEach(obj => {
+        headluar.addChild(obj);
+        test.push(obj);
+    });
+
+    woopy.setScale(0.1);
+    // telinga.addScale(1);
+
     //MATRIX
     var PROJMATRIX = LIBS.get_projection(40, CANVAS.width / CANVAS.height, 1, 100);
     var VIEWMATRIX = LIBS.get_I4();
 
+    LIBS.translateZ(VIEWMATRIX, -2);
 
     //DRAWING
     GL.clearColor(0.0, 0.0, 0.0, 0.0);
@@ -1188,95 +878,146 @@ function main() {
 
     GL.clearDepth(1.0);
 
-
+    
+    var membesar = true;
+    var nextTime = 0;
+    var ganjil = false;
+    var genap = true;
+    var maju = true;
+    var mundur = false;
+    
     var time_prev = 0;
+    
     var animate = function (time) {
         if (time > 0) {
             var dt = time - time_prev;
             if (!drag) {
                 dX *= AMORTIZATION;
                 dY *= AMORTIZATION;
-                THETA += dX;
-                PHI += dY;
+                THETA += dX * 0.05; // Mengurangi dampak perubahan sudut
+                PHI += dY * 0.05;
             }
-            //cam rotate
-            LIBS.set_I4(VIEWMATRIX);
-            LIBS.rotateY(VIEWMATRIX, THETA);
-            LIBS.rotateX(VIEWMATRIX, PHI);
-            LIBS.rotateX(VIEWMATRIX, LIBS.degToRad(10));
-            LIBS.translateZ(VIEWMATRIX, -17);
-            LIBS.translateY(VIEWMATRIX, -2);
-
-            //Sean start
-            //...
-            //Sean end
-        
-            //Euginia start
-            
-            //...
-            //Euginia end
-        
-            //Willy start
-            
-            //...
-            //Willy end
-            
+            var second = time / 1000; // Konversi milidetik ke detik
+    
+            // Memperbarui transformasi rotasi dan translasi berdasarkan input
+            woopy.setRotateMove(LIBS.radToDeg(PHI), LIBS.radToDeg(THETA), 0);
+    
+            // Animasi telinga membesar secara lebih halus
+            if (time - nextTime > 1000 && telinga.scale[0] < 4) {
+                if (membesar) {
+                    telinga.addScale(1.001); // Meningkatkan skala lebih halus
+                    membesar = false;
+                    nextTime = time;
+                } else {
+                    telinga.setScale(1); // Reset skala
+                    membesar = true;
+                }
+            }
+    
             time_prev = time;
         }
         GL.viewport(0, 0, CANVAS.width, CANVAS.height);
         GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
+    
+        woopy.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
+        woopy.draw();
+        woopy.setIdentityMove();
+    
+        // Animasi kaki dengan pergerakan yang lebih kecil dan lebih detail
+        var rotationAmount = 5; // Mengurangi jumlah rotasi
+        var moveAmount = 0.1; // Mengurangi jarak translasi
+    
+        if (second >= nextTime) {
+            if (genap) {
+              if (maju) {
+                  kakiKanan.setRotate(10,0,0);
+                  kakiKanan.setTranslateMove(0,0.3,0);
+                  lenganKiri.setRotate(10,0,0);
+                  tanganKiri.setRotate(10,0,0);
+                  
+              } else if (mundur){
+                  kakiKanan.setRotate(-10,0,0);
+                  kakiKanan.setTranslateMove(0,-0.3,0);
+                  lenganKiri.setRotate(-10,0,0);
+                  tanganKiri.setRotate(-10,0,0);
+              }
+              if (mundur) {
+                  kakiKiri.setRotate(10,0,0);
+                  kakiKiri.setTranslateMove(0,0.3,0);
+                  lenganKanan.setRotate(10,0,0);
+                  tanganKanan.setRotate(10,0,0);
+              } else if (maju){
+                  kakiKiri.setRotate(-10,0,0);
+                  kakiKiri.setTranslateMove(0,-0.3,0);
+                  lenganKanan.setRotate(-10,0,0);
+                  tanganKanan.setRotate(-10,0,0);
+              }
+                genap = false;
+                ganjil = true;
+          } else if (ganjil) {
+              if (maju) {
+                  kakiKanan.setRotate(-10,0,0);
+                  kakiKanan.setTranslateMove(0,-0.3,0);
+                  lenganKiri.setRotate(-10,0,0);
+                  tanganKiri.setRotate(-10,0,0);
+                  maju = false;
+                  mundur = true;
+              } else if (mundur) {
+                  kakiKanan.setRotate(10,0,0);
+                  kakiKanan.setTranslateMove(0,0.3,0);
+                  lenganKiri.setRotate(10,0,0);
+                  tanganKiri.setRotate(10,0,0);
+                  maju = true;
+                  mundur = false;
+              }
+              if (mundur) {
+                  kakiKiri.setRotate(-10,0,0);
+                  kakiKiri.setTranslateMove(0,-0.3,0);
+                  lenganKanan.setRotate(-10,0,0);
+                  tanganKanan.setRotate(-10,0,0);
+                  maju = false;
+                  mundur = true;
+              } else if (maju) {
+                  kakiKiri.setRotate(10,0,0);
+                  kakiKiri.setTranslateMove(0,0.3,0);
+                  lenganKanan.setRotate(10,0,0);
+                  tanganKanan.setRotate(10,0,0);
+                  maju = true;
+                  mundur = false;
+              }
+              genap = true;
+              ganjil = false;
+            } 
+            nextTime += 0.3;
+          }
+        if (second >= 3 && second <= 4) {
+            woopy.setTranslateMove(-0.1, 0, 0);
+          }
+          if (second >= 4 && second <= 8) {
+            woopy.setRotate(0,1,0);
+          }
+          if (second>= 8 && second <= 9) {
+            woopy.setTranslateMove(0.1,0,0);
+          }
+          if (second >= 9 && second <= 12) {
+            woopy.setRotate(2,0,0);
+          }
+          if (second >= 12 && second <= 13) {
+            woopy.setTranslateMove(0,0,0);
+          }
+          if (second >= 13 && second <= 15) {
+            woopy.setRotate(0,1,0);
+          }
+          if (second >= 15 && second <= 15) {
+            woopy.setTranslateMove(0,0,0);
+          }
 
-        //env start
-        envSean.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
-        envSean.draw();
-        envSean.setIdentityMove();
-
-        kaktus.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
-        kaktus.draw();
-        kaktus.setIdentityMove();
-        
-        spotlight1.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
-        spotlight1.draw();
-        spotlight1.setIdentityMove();
-        spotlight1.setRotateMove(0,0,0);
-
-        spotlight2.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
-        spotlight2.draw();
-        spotlight2.setIdentityMove();
-        spotlight2.setRotateMove(0,0,0);
-
-        mic1.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
-        mic1.draw();
-        mic1.setIdentityMove();
-        mic1.setRotateMove(0,0,0);
-
-        mic2.setuniformmatrix4(PROJMATRIX, VIEWMATRIX);
-        mic2.draw();
-        mic2.setIdentityMove();
-        mic2.setRotateMove(0,0,0);
-        //...
-        //env end
-        
-        //Sean start
-        
-        //...
-        //Sean end
-        
-        //Euginia start
-            
-        //...
-        //Euginia end
-        
-        //Willy start
-            
-        //...
-        //Willy end
-        
-        
         GL.flush();
         window.requestAnimationFrame(animate);
     }
-
+    
     animate();
+    
+    
 }
 window.addEventListener('load', main);
