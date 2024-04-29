@@ -110,7 +110,7 @@ class MyObject {
         GL.drawElements(GL.TRIANGLES, this.object_faces.length, GL.UNSIGNED_SHORT, 0);
         this.child.forEach(obj => {
             if (lineSean.includes(obj) | kumisAtasSean.includes(obj) | kumisKiriSean.includes(obj) | kumisKananSean.includes(obj) | mouthVerticalSean.includes(obj) |
-               alis.includes(obj) | kumis_Atas.includes(obj) | kumis_Bawah.includes(obj) | arrmulut.includes(obj)) {
+               alis.includes(obj) | kumis_Atas.includes(obj) | kumis_Bawah.includes(obj) | arrmulut.includes(obj) | line.includes(obj) | mouthVertical.includes(obj) | kumisKanan.includes(obj)) {
                 obj.drawLine();
             } else {
                 obj.draw();
@@ -126,7 +126,7 @@ class MyObject {
         GL.drawElements(GL.LINE_STRIP, this.object_faces.length, GL.UNSIGNED_SHORT, 0);
         this.child.forEach(obj => {
             if (lineSean.includes(obj) | kumisAtasSean.includes(obj) | kumisKiriSean.includes(obj) | kumisKananSean.includes(obj) | mouthVerticalSean.includes(obj) |
-               alis.includes(obj) | kumis_Atas.includes(obj) | kumis_Bawah.includes(obj) | arrmulut.includes(obj)) {
+               alis.includes(obj) | kumis_Atas.includes(obj) | kumis_Bawah.includes(obj) | arrmulut.includes(obj) | line.includes(obj) | mouthVertical.includes(obj) | kumisKanan.includes(obj)) {
                 obj.drawLine();
             } else {
                 obj.draw();
@@ -2438,6 +2438,7 @@ function main() {
     mouthVertical.forEach(obj => {
         headluar.addChild(obj);
     });
+
 
 
     eyes.forEach(obj => {
