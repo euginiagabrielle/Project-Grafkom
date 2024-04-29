@@ -2656,8 +2656,7 @@ function main() {
             yeDee.setTranslateMove(-0.1, 0, 0);
         }
         if (sean_second >= 5 & sean_second <= 11) {
-            yeDee.setRotate(2,0,0);
-            yeDee.setRotate(0,2,0);
+            yeDee.setRotate(2,2,0);
         }
         if (sean_second >= 11 & sean_second <= 12) {
             yeDee.setTranslateMove(0.1,0,0);
